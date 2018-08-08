@@ -362,18 +362,18 @@ class BlockScanner {
     }
 
     async savePeerlist(channelName) {
-        var peerlists = await this.proxy.getConnectedPeers(channelName);
+        var channel_peer_list = await this.proxy.getConnectedPeers(channelName);
         let genesisBlock = await this.proxy.getGenesisBlock(channelName)
         let temp = BlockDecoder.decodeBlock(genesisBlock)
         let genesisBlockHash = await fileUtil.generateBlockHash(temp.header)
-        let peerlen = peerlists.length
+        let peerlen = channel_peer_list.length
         for (let i = 0; i < peerlen; i++) {
-            var peers = {};
-            let peerlist = peerlists[i]
-            peers.requests = peerlist._url;
-            peers.genesis_block_hash = genesisBlockHash;
-            peers.server_hostname = peerlist._options["server_hostname"];
-            this.crudService.savePeer(peers);
+            var peer = {};
+            let channel_peer = channel_peer_list[i];
+            peer.requests = channel_peer._peer._url;
+            peer.genesis_block_hash = genesisBlockHash;
+            peer.server_hostname = channel_peer._peer._options["server_hostname"];
+            this.crudService.savePeer(peer);
         }
     }
     // ====================Orderer BE-303=====================================
