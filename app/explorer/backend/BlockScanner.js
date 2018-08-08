@@ -447,9 +447,11 @@ class BlockScanner {
       peers.channel_genesis_hash = genesisBlockHash;
       if (peerlist._options['grpc.default_authority']) {
         peers.server_hostname = peerlist._options['grpc.default_authority'];
-      } else {
+      } else if (peerlist._options['grpc.ssl_target_name_override']) {
         peers.server_hostname =
           peerlist._options['grpc.ssl_target_name_override'];
+      } else {
+        peers.server_hostname = peerlist._options['server_hostname'];
       }
       this.crudService.savePeer(peers);
     }

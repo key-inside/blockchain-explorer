@@ -201,7 +201,8 @@ class Platform {
           pem: Buffer.from(data).toString(),
           'ssl-target-name-override': configuration.getOrg(org)[key][
             'server-hostname'
-          ]
+          ],
+          server_hostname: configuration.getOrg(org)[key]['server-hostname']
         });
         this.addStatusPeer(org, key, configuration.getOrg(org)[key].requests, {
           pem: Buffer.from(data).toString(),
@@ -210,7 +211,9 @@ class Platform {
           ]
         });
       } else {
-        peer = client.newPeer(configuration.getOrg(org)[key].requests);
+        peer = client.newPeer(configuration.getOrg(org)[key].requests, {
+          server_hostname: configuration.getOrg(org)[key]['server-hostname']
+        });
         this.addStatusPeer(org, key, configuration.getOrg(org)[key].requests, {
           'ssl-target-name-override': configuration.getOrg(org)[key][
             'server-hostname'
