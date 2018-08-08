@@ -157,7 +157,7 @@ class BlockScanner {
             let creator_id_bytes = txObj.payload.header.signature_header.creator.IdBytes;
             if (txObj.payload.data.actions != undefined) {
                 chaincode_proposal_input = txObj.payload.data.actions[0].payload.chaincode_proposal_payload.input;
-                if (chaincode_proposal_input != undefined)
+                if (chaincode_proposal_input != undefined && typeof chaincode_proposal_input.map == 'function')
                     chaincode_proposal_input = convertHex.bytesToHex(chaincode_proposal_input)
                 endorser_signature = txObj.payload.data.actions[0].payload.action.endorsements[0].signature;
                 if (endorser_signature != undefined)
