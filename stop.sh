@@ -2,6 +2,4 @@
 #    SPDX-License-Identifier: Apache-2.0
 #
 
-pkill node
-
-
+kill $(lsof -t -i:8080)
