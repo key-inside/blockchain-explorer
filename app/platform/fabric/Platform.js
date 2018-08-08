@@ -170,11 +170,12 @@ class Platform {
           pem: Buffer.from(data).toString(),
           "ssl-target-name-override": configuration.getOrg(org)[key][
             "server-hostname"
-          ]
+          ],
+          "server_hostname":configuration.getOrg(org)[key]["server-hostname"]
         });
       } else {
         peer = client.newPeer(configuration.getOrg(org)[key].requests);
-        this.addStatusPeer(org, key,configuration.getOrg(org)[key].requests);
+        this.addStatusPeer(org, key, configuration.getOrg(org)[key].requests, {"server_hostname":configuration.getOrg(org)[key]["server-hostname"]});
       }
 
       this.peers[[org, key]] = peer;
