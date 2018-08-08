@@ -27,6 +27,9 @@ var _serviceProto = grpc.load(appRoot  + '/node_modules/fabric-client/lib/protos
 
 var logger = utils.getLogger('Admin.js');
 
+var client_utils = require('fabric-client/lib/client-utils.js');
+var _commonProto = grpc.load(appRoot  + '/node_modules/fabric-client/lib/protos/common/common.proto').common;
+var _emptyProto = grpc.load(appRoot  + '/node_modules/fabric-client/lib/protos/google/protobuf/empty.proto').google.protobuf;
 
 /**
  *
@@ -106,7 +109,7 @@ var Admin = class extends Remote {
      *                              of the Peer instance and the global timeout in the config settings.
      * @returns {Promise} A Promise for a {@link ProposalResponse}
      */
-    GetStatus(timeout) {
+    GetStatus(client, timeout) {
         logger.debug('Admin.GetStatus - Start');
         let self = this;
         let rto = self._request_timeout;
@@ -114,6 +117,27 @@ var Admin = class extends Remote {
             rto = timeout;
 
 
+        const payload = new _commonProto.Payload();
+        const data = new _emptyProto.Empty();
+        const signingIdentity = client.getUserContext().getSigningIdentity();
+        const channelHeader = client_utils.buildChannelHeader(
+            _commonProto.HeaderType.PEER_ADMIN_OPERATION,
+            '',
+            client.newTransactionID(true).getTransactionID(),
+            null,
+            null,
+            null,
+            client.getClientCertHash()
+        );
+        const header = client_utils.buildHeader(signingIdentity, channelHeader, utils.getNonce());
+        payload.setHeader(header);
+        payload.setData(data.toBuffer());
+        const payload_bytes = payload.toBuffer();
+        const signature = Buffer.from(signingIdentity.sign(payload_bytes));
+        const envelope = {
+			signature: signature,
+			payload: payload_bytes
+		}
 
         // Send the transaction to the peer node via grpc
         // The rpc specification on the peer side is:
@@ -124,7 +148,7 @@ var Admin = class extends Remote {
                 return reject(new Error('REQUEST_TIMEOUT'));
             }, rto);
 
-            self._endorserClient.GetStatus({}, function(err, serverStatus) {
+            self._endorserClient.GetStatus(envelope, function(err, serverStatus) {
                 clearTimeout(send_timeout);
                 if (err) {
                     logger.debug('Error GetStatus response from: %s status: %s',self._url, err);

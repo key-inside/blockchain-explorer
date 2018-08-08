@@ -107,8 +107,10 @@ class Platform {
       try {
         var promises = [];
         Object.keys(this.peersStatus).forEach(peer => {
-          var client = this.peersStatus[[peer]];
-          var psPromise = client.GetStatus(client._options["grpc.ssl_target_name_override"]);
+          var admin = this.peersStatus[[peer]];
+          var [o, p] = peer.split(',');
+          var client = this.clients[o];
+          var psPromise = admin.GetStatus(client);
           promises.push(psPromise);
         });
         Promise.all(promises).then(function(successMessage){
