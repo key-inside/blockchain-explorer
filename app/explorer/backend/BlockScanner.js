@@ -372,7 +372,7 @@ class BlockScanner {
             let peerlist = peerlists[i]
             peers.requests = peerlist._url;
             peers.genesis_block_hash = genesisBlockHash;
-            peers.server_hostname = peerlist._options["grpc.default_authority"];
+            peers.server_hostname = peerlist._options["server_hostname"];
             this.crudService.savePeer(peers);
         }
     }
