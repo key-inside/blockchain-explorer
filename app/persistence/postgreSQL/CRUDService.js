@@ -26,7 +26,7 @@ class CRUDService {
 
     getTxList(channelName, blockNum, txid) {
         let sqlTxList = ` select t.creator_msp_id,t.txhash,t.type,t.chaincodename,t.createdt,channel.name as channelname from transactions as t  inner join channel on t.genesis_block_hash=channel.genesis_block_hash where  t.blockid >= ${blockNum} and t.id >= ${txid} and
-        t.genesis_block_hash = '${channelName}'  order by  t.id desc`;
+        t.genesis_block_hash = '${channelName}'  order by t.blockid desc, t.id desc`;
         return sql.getRowsBySQlQuery(sqlTxList);
 
     }
