@@ -13,6 +13,18 @@ var hfc = require('fabric-client');
 var Admin = require('./Admin.js');
 hfc.addConfigFile(path.join(__dirname, './config.json'));
 
+var appRoot = require('app-root-path');
+var grpc = require('grpc');
+var utils = require(appRoot + '/node_modules/fabric-client/lib/utils.js');
+var client_utils = require(appRoot +
+  '/node_modules/fabric-client/lib/client-utils.js');
+var _commonProto = grpc.load(
+  appRoot + '/node_modules/fabric-client/lib/protos/common/common.proto'
+).common;
+var _emptyProto = grpc.load(
+  appRoot + '/node_modules/fabric-client/lib/protos/google/protobuf/empty.proto'
+).google.protobuf;
+
 class Platform {
   constructor() {
     this.clients = {};
@@ -107,8 +119,35 @@ class Platform {
     try {
       var promises = [];
       Object.keys(this.peersStatus).forEach(peer => {
-        var client = this.peersStatus[[peer]];
-        var psPromise = client.GetStatus({});
+        var admin = this.peersStatus[[peer]];
+        var [o, p] = peer.split(',');
+        var client = this.clients[o];
+        const payload = new _commonProto.Payload();
+        const data = new _emptyProto.Empty();
+        const signingIdentity = client.getUserContext().getSigningIdentity();
+        const channelHeader = client_utils.buildChannelHeader(
+          _commonProto.HeaderType.PEER_ADMIN_OPERATION,
+          '',
+          client.newTransactionID(true).getTransactionID(),
+          null,
+          null,
+          null,
+          client.getClientCertHash()
+        );
+        const header = client_utils.buildHeader(
+          signingIdentity,
+          channelHeader,
+          utils.getNonce()
+        );
+        payload.setHeader(header);
+        payload.setData(data.toBuffer());
+        const payload_bytes = payload.toBuffer();
+        const signature = Buffer.from(signingIdentity.sign(payload_bytes));
+        const envelope = {
+          signature: signature,
+          payload: payload_bytes
+        };
+        var psPromise = admin.GetStatus(envelope);
         promises.push(psPromise);
       });
       Promise.all(promises).then(function(successMessage) {
