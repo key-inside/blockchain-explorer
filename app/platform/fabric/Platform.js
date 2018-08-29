@@ -2,16 +2,16 @@
  *    SPDX-License-Identifier: Apache-2.0
  */
 
-var path = require("path");
-var helper = require("../../helper.js");
-var logger = helper.getLogger("platform");
-var configuration = require("./Configuration.js");
-var fs = require("fs-extra");
-var FabricChannel = require("./FabricChannel.js");
-var Proxy = require("./Proxy.js");
-var hfc = require("fabric-client");
-var Admin = require("./Admin.js");
-hfc.addConfigFile(path.join(__dirname, "./config.json"));
+var path = require('path');
+var helper = require('../../helper.js');
+var logger = helper.getLogger('platform');
+var configuration = require('./Configuration.js');
+var fs = require('fs-extra');
+var FabricChannel = require('./FabricChannel.js');
+var Proxy = require('./Proxy.js');
+var hfc = require('fabric-client');
+var Admin = require('./Admin.js');
+hfc.addConfigFile(path.join(__dirname, './config.json'));
 
 class Platform {
   constructor() {
@@ -40,8 +40,8 @@ class Platform {
     );
   }
 
-  addStatusPeer(org, key, url, opts){
-       this.peersStatus[[org, key]] = new Admin(url, opts);
+  addStatusPeer(org, key, url, opts) {
+    this.peersStatus[[org, key]] = new Admin(url, opts);
   }
 
   getDefaultPeer() {
@@ -59,11 +59,11 @@ class Platform {
     return this.peers[[org, peer]];
   }
 
-// ====================Orderer BE-303=====================================
+  // ====================Orderer BE-303=====================================
   getOrdererObject(org, orderer) {
     return this.orderers[[org, orderer]];
   }
-// ====================Orderer BE-303=====================================
+  // ====================Orderer BE-303=====================================
   getDefaultClient() {
     return this.getClientForOrg(configuration.getDefaultOrg());
   }
@@ -82,7 +82,7 @@ class Platform {
 
     try {
       admin = await client.createUser({
-        username: "peer" + org + "Admin",
+        username: 'peer' + org + 'Admin',
         mspid: configuration.getMspID(org),
         cryptoContent: {
           privateKeyPEM: keyPEM,
@@ -97,30 +97,28 @@ class Platform {
         configuration.getMspID(org)
       );
     } catch (err) {
-      console.log("error-admin--" + err.stack);
+      console.log('error-admin--' + err.stack);
       throw err;
     }
     return admin;
   }
 
-  async getPeersStatus(channelName,cb){
-      try {
-        var promises = [];
-        Object.keys(this.peersStatus).forEach(peer => {
-          var admin = this.peersStatus[[peer]];
-          var [o, p] = peer.split(',');
-          var client = this.clients[o];
-          var psPromise = admin.GetStatus(client);
-          promises.push(psPromise);
-        });
-        Promise.all(promises).then(function(successMessage){
-          logger.debug("GetStatus All!" , successMessage);
-          cb(successMessage);
-        });
-      } catch(err) {
-        console.log(err);
-        logger.error(err)
-        cb([])
+  async getPeersStatus(channelName, cb) {
+    try {
+      var promises = [];
+      Object.keys(this.peersStatus).forEach(peer => {
+        var client = this.peersStatus[[peer]];
+        var psPromise = client.GetStatus({});
+        promises.push(psPromise);
+      });
+      Promise.all(promises).then(function(successMessage) {
+        logger.debug('GetStatus All!', successMessage);
+        cb(successMessage);
+      });
+    } catch (err) {
+      console.log(err);
+      logger.error(err);
+      cb([]);
     }
   }
 
@@ -156,27 +154,29 @@ class Platform {
   setupPeers(org, client, isReturn) {
     configuration.getPeersByOrg(org).forEach(key => {
       let peer;
-      if (configuration.getOrg(org)[key]["tls_cacerts"] != undefined) {
+      if (configuration.getOrg(org)[key]['tls_cacerts'] != undefined) {
         let data = fs.readFileSync(
-          configuration.getOrg(org)[key]["tls_cacerts"]
+          configuration.getOrg(org)[key]['tls_cacerts']
         );
         peer = client.newPeer(configuration.getOrg(org)[key].requests, {
           pem: Buffer.from(data).toString(),
-          "ssl-target-name-override": configuration.getOrg(org)[key][
-            "server-hostname"
-          ],
-          "server_hostname":configuration.getOrg(org)[key]["server-hostname"]
+          'ssl-target-name-override': configuration.getOrg(org)[key][
+            'server-hostname'
+          ]
         });
-        this.addStatusPeer(org, key,configuration.getOrg(org)[key].requests, {
+        this.addStatusPeer(org, key, configuration.getOrg(org)[key].requests, {
           pem: Buffer.from(data).toString(),
-          "ssl-target-name-override": configuration.getOrg(org)[key][
-            "server-hostname"
-          ],
-          "server_hostname":configuration.getOrg(org)[key]["server-hostname"]
+          'ssl-target-name-override': configuration.getOrg(org)[key][
+            'server-hostname'
+          ]
         });
       } else {
-        peer = client.newPeer(configuration.getOrg(org)[key].requests, {"server_hostname":configuration.getOrg(org)[key]["server-hostname"]});
-        this.addStatusPeer(org, key, configuration.getOrg(org)[key].requests, {"server_hostname":configuration.getOrg(org)[key]["server-hostname"]});
+        peer = client.newPeer(configuration.getOrg(org)[key].requests);
+        this.addStatusPeer(org, key, configuration.getOrg(org)[key].requests, {
+          'ssl-target-name-override': configuration.getOrg(org)[key][
+            'server-hostname'
+          ]
+        });
       }
 
       this.peers[[org, key]] = peer;
@@ -184,51 +184,52 @@ class Platform {
   }
 
   async setChannels() {
-    for (let orgname of configuration.getOrgs()) {
-      let client = this.getClientForOrg(orgname);
-      for (let peername of configuration.getPeersByOrg(orgname)) {
-        let proxy = this.getProxy(orgname, peername);
-        let channelInfo = await proxy.queryChannels();
-        for (let chan of channelInfo.channels) {
-          let channelName = chan.channel_id;
-          if (this.channels[channelName]) {
-            this.channels[channelName].channel.addPeer(this.getPeerObject(orgname, peername));
-          } else {
-            let channel = client.newChannel(channelName);
-            channel.addPeer(this.getPeerObject(orgname, peername));
-            this.setupOrderers(client, channel);
-            let channel_event_hub = channel.newChannelEventHub(this.getPeerObject(orgname, peername));
-            this.channels[channelName] = new FabricChannel(
-              channelName,
-              channel,
-              channel_event_hub
-            );
-          }
+    var client = this.getClientForOrg(configuration.getDefaultOrg());
+
+    var proxy = this.getDefaultProxy();
+    var channelInfo = await proxy.queryChannels();
+
+    channelInfo.channels.forEach(chan => {
+      var channelName = chan.channel_id;
+      let channel = client.newChannel(channelName);
+      channel.addPeer(this.getDefaultPeer());
+      this.setupOrderers(client, channel);
+      var channel_event_hub = channel.newChannelEventHub(this.getDefaultPeer());
+      this.channels[channelName] = new FabricChannel(
+        channelName,
+        channel,
+        channel_event_hub
+      );
+    });
+  }
+  //BE303
+  async setupOrderers(client, channel) {
+    try {
+      configuration.getOrderersByOrg().forEach(val => {
+        //console.log("Line179-setupOrderers"+JSON.stringify(val));
+        let orderer;
+        if (val.tls_cacerts != undefined) {
+          let data = fs.readFileSync(val.tls_cacerts);
+          orderer = client.newOrderer(val.requests, {
+            pem: Buffer.from(data).toString(),
+            'ssl-target-name-override': val['server-hostname']
+          });
+        } else {
+          orderer = client.newOrderer(val.requests);
         }
-      }
+        channel.addOrderer(orderer);
+      });
+    } catch (err) {
+      throw 'There is error in reading config.json for orderer parameters.Please check config.json parameters:' +
+        err;
+      return null;
     }
   }
   //BE303
-  async setupOrderers(client,channel) {
-    configuration.getOrderersByOrg().forEach(val => {
-    //console.log("Line179-setupOrderers"+JSON.stringify(val));
-      let orderer;
-      if (val.tls_cacerts != undefined) {
-        let data = fs.readFileSync(val.tls_cacerts);
-        orderer = client.newOrderer(val.requests, {
-          pem: Buffer.from(data).toString(),"ssl-target-name-override": val["server-hostname"]
-          });
-      } else {
-        orderer = client.newOrderer(val.requests);
-      }
-    channel.addOrderer(orderer);
-    });
-  }
-//BE303
 
   async getClientFromPath(userorg, orgPath, networkCfgPath) {
     try {
-      logger.info(userorg, orgPath, networkCfgPath)
+      logger.info(userorg, orgPath, networkCfgPath);
       let config = '-connection-profile-path';
       let networkConfig = 'network' + config;
       hfc.setConfigSetting(networkConfig, networkCfgPath);
@@ -238,17 +239,24 @@ class Platform {
       await client.initCredentialStores();
       return client;
     } catch (err) {
-      logger.error("getClientForOrg", err);
+      logger.error('getClientForOrg', err);
       return null;
     }
   }
 
   async createChannel(artifacts) {
-    logger.info("############### C R E A T E  C H A N N E L ###############");
-    logger.info("Creating channel: " + artifacts.orgName, artifacts.orgConfigPath, artifacts.channelConfigPath);
+    logger.info('############### C R E A T E  C H A N N E L ###############');
+    logger.info(
+      'Creating channel: ' + artifacts.orgName,
+      artifacts.orgConfigPath,
+      artifacts.channelConfigPath
+    );
     try {
-      var client = await this.getClientFromPath(artifacts.orgName, artifacts.orgConfigPath,
-        artifacts.channelConfigPath);
+      var client = await this.getClientFromPath(
+        artifacts.orgName,
+        artifacts.orgConfigPath,
+        artifacts.channelConfigPath
+      );
       var envelope = fs.readFileSync(artifacts.channelTxPath);
       var channelConfig = client.extractChannelConfig(envelope);
       let signature = client.signChannelConfig(channelConfig);
@@ -265,16 +273,13 @@ class Platform {
         status: response.status ? response.status : '',
         message: response.info ? response.info : '',
         txId: request.txId.getTransactionID()
-      }
+      };
       return channelResponse;
-
     } catch (error) {
-      logger.error("createChannel", error)
+      logger.error('createChannel', error);
       return null;
     }
   }
 }
-
-
 
 module.exports = Platform;
