@@ -226,23 +226,33 @@ class Platform {
   }
 
   async setChannels() {
-    var client = this.getClientForOrg(configuration.getDefaultOrg());
-
-    var proxy = this.getDefaultProxy();
-    var channelInfo = await proxy.queryChannels();
-
-    channelInfo.channels.forEach(chan => {
-      var channelName = chan.channel_id;
-      let channel = client.newChannel(channelName);
-      channel.addPeer(this.getDefaultPeer());
-      this.setupOrderers(client, channel);
-      var channel_event_hub = channel.newChannelEventHub(this.getDefaultPeer());
-      this.channels[channelName] = new FabricChannel(
-        channelName,
-        channel,
-        channel_event_hub
-      );
-    });
+    for (let orgname of configuration.getOrgs()) {
+      let client = this.getClientForOrg(orgname);
+      for (let peername of configuration.getPeersByOrg(orgname)) {
+        let proxy = this.getProxy(orgname, peername);
+        let channelInfo = await proxy.queryChannels();
+        for (let chan of channelInfo.channels) {
+          let channelName = chan.channel_id;
+          if (this.channels[channelName]) {
+            this.channels[channelName].channel.addPeer(
+              this.getPeerObject(orgname, peername)
+            );
+          } else {
+            let channel = client.newChannel(channelName);
+            channel.addPeer(this.getPeerObject(orgname, peername));
+            this.setupOrderers(client, channel);
+            let channel_event_hub = channel.newChannelEventHub(
+              this.getPeerObject(orgname, peername)
+            );
+            this.channels[channelName] = new FabricChannel(
+              channelName,
+              channel,
+              channel_event_hub
+            );
+          }
+        }
+      }
+    }
   }
   //BE303
   async setupOrderers(client, channel) {
