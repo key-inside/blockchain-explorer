@@ -4,24 +4,21 @@
       "version": "1.0",
       "clients": {
         "client-1": {
-          "tlsEnable": true,
-          "organization": "Org2",
-          "channel": "mychannel",
+          "tlsEnable": false,
+          "organization": "ORG1",
+          "channel": "kiesnet-dev",
           "credentialStore": {
-            "path": "./tmp/credentialStore_Org2/credential",
+            "path": "./tmp/credentialStore_Org1/credential",
             "cryptoStore": {
-              "path": "./tmp/credentialStore_Org2/crypto"
+              "path": "./tmp/credentialStore_Org1/crypto"
             }
           }
         }
       },
       "channels": {
-        "mychannel": {
+        "kiesnet-dev": {
           "peers": {
-            "peer0.org1.example.com": {},
-            "peer1.org1.example.com": {},
-            "peer0.org2.example.com": {},
-            "peer1.org2.example.com": {}
+            "kiesnet-dev-peer0": {}
           },
           "connection": {
             "timeout": {
@@ -35,119 +32,60 @@
         }
       },
       "organizations": {
-        "Org1": {
-          "mspid": "Org1MSP",
+        "ORG1": {
+          "mspid": "ORG1",
           "fullpath": false,
           "adminPrivateKey": {
             "path":
-              "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore"
+              "/tmp/crypto/peerOrganizations/kiesnet.dev/users/Admin@kiesnet.dev/msp/keystore"
           },
           "signedCert": {
             "path":
-              "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
+              "/tmp/crypto/peerOrganizations/kiesnet.dev/users/Admin@kiesnet.dev/msp/signcerts"
           },
-          "certificateAuthorities": ["ca-org1"],
-          "peers": ["peer0.org1.example.com", "peer1.org1.example.com"]
+          "certificateAuthorities": ["ca.kiesnet.dev"],
+          "peers": ["kiesnet-dev-peer0"]
         },
-        "Org2": {
-          "mspid": "Org2MSP",
+        "ORDERER": {
+          "mspid": "ORDERER",
           "adminPrivateKey": {
             "path":
-              "/tmp/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore"
-          },
-          "signedCert": {
-            "path":
-              "/tmp/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts"
-          },
-          "certificateAuthorities": ["ca-org2"],
-          "peers": ["peer0.org2.example.com", "peer1.org2.example.com"]
-        },
-        "OrdererMSP": {
-          "mspid": "OrdererMSP",
-          "adminPrivateKey": {
-            "path":
-              "/tmp/crypto/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore"
+              "/tmp/crypto/ordererOrganizations/kiesnet.dev/users/Admin@kiesnet.dev/msp/keystore"
           }
         }
       },
       "peers": {
-        "peer0.org1.example.com": {
+        "kiesnet-dev-peer0": {
           "tlsCACerts": {
             "path":
-              "/tmp/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+              "/tmp/crypto/peerOrganizations/kiesnet.dev/peers/peer0.kiesnet.dev/tls/ca.crt"
           },
-          "url": "grpcs://peer0.org1.example.com:7051",
-          "eventUrl": "grpcs://peer0.org1.example.com:7053",
+          "url": "grpc://kiesnet-dev-peer0:7051",
+          "eventUrl": "grpc://kiesnet-dev-peer0:7053",
           "grpcOptions": {
-            "ssl-target-name-override": "peer0.org1.example.com"
-          }
-        },
-        "peer1.org1.example.com": {
-          "tlsCACerts": {
-            "path":
-              "/tmp/crypto/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/ca.crt"
-          },
-          "url": "grpcs://peer1.org1.example.com:7051",
-          "eventUrl": "grpcs://peer1.org1.example.com:7053",
-          "grpcOptions": {
-            "ssl-target-name-override": "peer1.org1.example.com"
-          }
-        },
-        "peer0.org2.example.com": {
-          "tlsCACerts": {
-            "path":
-              "/tmp/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt"
-          },
-          "url": "grpcs://peer0.org2.example.com:7051",
-          "eventUrl": "grpcs://peer0.org2.example.com:7053",
-          "grpcOptions": {
-            "ssl-target-name-override": "peer0.org2.example.com"
-          }
-        },
-        "peer1.org2.example.com": {
-          "tlsCACerts": {
-            "path":
-              "/tmp/crypto/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls/ca.crt"
-          },
-          "url": "grpcs://peer1.org2.example.com:7051",
-          "eventUrl": "grpcs://peer1.org2.example.com:7053",
-          "grpcOptions": {
-            "ssl-target-name-override": "peer1.org2.example.com"
+            "ssl-target-name-override": "kiesnet-dev-peer0"
           }
         }
       },
       "orderers": {
-        "orderer.example.com": {
-          "url": "grpcs://orderer.example.com:7050"
+        "kiesnet-dev-orderer": {
+          "url": "grpc://kiesnet-dev-orderer:7050"
         }
       },
       "certificateAuthorities": {
-        "ca-org1": {
-          "url": "https://ca.org1.example.com:7054",
+        "ca.kiesnet.dev": {
+          "url": "http://kiesnet-dev-ca:7054",
           "httpOptions": {
             "verify": false
           },
           "tlsCACerts": {
             "path":
-              "/tmp/crypto/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem"
+              "/tmp/crypto/peerOrganizations/kiesnet.dev/ca/ca.kiesnet.dev-cert.pem"
           },
-          "caName": "ca-org1"
-        },
-        "ca-org2": {
-          "url": "https://ca.org2.example.com:7054",
-          "httpOptions": {
-            "verify": false
-          },
-          "tlsCACerts": {
-            "path":
-              "/tmp/crypto/peerOrganizations/org2.example.com/ca/ca.org2.example.com-cert.pem"
-          },
-          "caName": "ca-org2"
+          "caName": "ca.kiesnet.dev"
         }
       }
-    },
-    "network-2": {}
+    }
   },
-  "configtxgenToolPath": "fabric-path/fabric-samples/bin",
   "license": "Apache-2.0"
 }
