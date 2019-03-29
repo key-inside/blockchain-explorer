@@ -1,0 +1,86 @@
+{
+  "network-configs": {
+    "network-1": {
+      "version": "1.0",
+      "clients": {
+        "client-1": {
+          "tlsEnable": false,
+          "organization": "payprotocol",
+          "channel": "payprotocol",
+          "credentialStore": {
+            "path": "./tmp/credentialStore_payprotocol/credential",
+            "cryptoStore": {
+              "path": "./tmp/credentialStore_payprotocol/crypto"
+            }
+          }
+        }
+      },
+      "channels": {
+        "payprotocol": {
+          "peers": {
+            "15.164.50.242": {},
+            "54.180.107.135": {}
+          },
+          "connection": {
+            "timeout": {
+              "peer": {
+                "endorser": "6000",
+                "eventHub": "6000",
+                "eventReg": "6000"
+              }
+            }
+          }
+        }
+      },
+      "organizations": {
+        "payprotocol": {
+          "mspid": "payprotocol",
+          "signedCert": {
+            "path": "/tmp/crypto/peers/payprotocol/users/admin/msp/signcerts"
+          },
+          "adminPrivateKey": {
+            "path": "/tmp/crypto/peers/payprotocol/users/admin/msp/keystore"
+          },
+          "peers": ["15.164.50.242", "54.180.107.135"]
+        },
+        "payprotocol-orderer": {
+          "mspid": "payprotocol-orderer",
+          "adminPrivateKey": {
+            "path": "/tmp/crypto/peers/payprotocol/users/admin/msp/keystore"
+          }
+        }
+      },
+      "peers": {
+        "15.164.50.242": {
+          "url": "grpc://15.164.50.242:7051",
+          "eventUrl": "grpc://15.164.50.242:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "payprotocol-peer-001"
+          }
+        },
+        "54.180.107.135": {
+          "url": "grpc://54.180.107.135:7051",
+          "eventUrl": "grpc://54.180.107.135:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "payprotocol-peer-002"
+          }
+        }
+      },
+      "orderers": {
+        "payprotocol-orderer-001": {
+          "url": "grpc://54.180.80.123:7050"
+        },
+        "payprotocol-orderer-002": {
+          "url": "grpc://13.125.206.150:7050"
+        },
+        "payprotocol-orderer-003": {
+          "url": "grpc://52.79.243.32:7050"
+        },
+        "payprotocol-orderer-004": {
+          "url": "grpc://54.180.101.239:7050"
+        }
+      }
+    }
+  },
+  "license": "Apache-2.0"
+}
