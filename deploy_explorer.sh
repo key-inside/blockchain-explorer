@@ -159,7 +159,7 @@ function deploy_load_database(){
 	echo "Waiting...1s"
 	sleep 1s
 	echo "Creating default database schemas..."
-	docker exec $fabric_explorer_db_name /bin/bash /opt/createdb.sh
+	docker exec --user=postgres $fabric_explorer_db_name /bin/bash /opt/createdb.sh
 }
 
 function deploy_build_explorer(){
@@ -192,6 +192,8 @@ function deploy_run_explorer(){
 		-e ENROLL_AFFILIATION=".department2" \
 		-e ADMIN_USERNAME="********" \
 		-e ADMIN_SECRET="********" \
+		# -e HFC_LOGGING='{"debug":"/opt/logs/app/hfc.log","info":"/opt/logs/app/hfc.log","error":"/opt/logs/app/hfc.log","warn":"/opt/logs/app/hfc.log"}' \
+		-e DISCOVERY_AS_LOCALHOST=false \
 		-v $network_config_file:/opt/explorer/app/platform/fabric/config.json \
 		-v $network_crypto_base_path:/tmp/crypto \
 		-p 8090:8080 \
