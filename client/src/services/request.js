@@ -3,6 +3,7 @@
  */
 
 import agent from 'superagent';
+
 export const post = (uri, payload) =>
   new Promise((resolve, reject) => {
     agent

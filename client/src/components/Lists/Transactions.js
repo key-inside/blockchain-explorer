@@ -7,11 +7,11 @@ import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import { Button } from 'reactstrap';
 import matchSorter from 'match-sorter';
+import moment from 'moment';
 import ReactTable from '../Styled/Table';
 import TransactionView from '../View/TransactionView';
 import DatePicker from '../Styled/DatePicker';
 import MultiSelect from '../Styled/MultiSelect';
-import moment from 'moment';
 
 import {
   currentChannelType,
@@ -106,12 +106,13 @@ export class Transactions extends Component {
     transactionList.forEach(element => {
       selection[element.blocknum] = false;
     });
-    let opts = [];
+    const opts = [];
     this.props.transactionByOrg.forEach(val => {
       opts.push({ label: val.creator_msp_id, value: val.creator_msp_id });
     });
     this.setState({ selection, options: opts });
   }
+
   componentWillReceiveProps(nextProps) {
     if (
       this.state.search &&
@@ -130,6 +131,7 @@ export class Transactions extends Component {
   componentWillUnmount() {
     clearInterval(this.interVal);
   }
+
   handleCustomRender(selected, options) {
     if (selected.length === 0) {
       return 'Select Orgs';
@@ -140,6 +142,7 @@ export class Transactions extends Component {
 
     return selected.join(',');
   }
+
   searchTransactionList = async channel => {
     let query = `from=${new Date(this.state.from).toString()}&&to=${new Date(
       this.state.to
@@ -159,6 +162,7 @@ export class Transactions extends Component {
     await getTransaction(currentChannel, tid);
     this.setState({ dialogOpen: true });
   };
+
   handleMultiSelect = value => {
     this.setState({ orgs: value });
   };
@@ -166,6 +170,7 @@ export class Transactions extends Component {
   handleDialogClose = () => {
     this.setState({ dialogOpen: false });
   };
+
   handleSearch = async () => {
     if (this.interval !== undefined) {
       clearInterval(this.interval);
@@ -340,12 +345,12 @@ export class Transactions extends Component {
           </div>
           <div className="col-md-2">
             <MultiSelect
-              hasSelectAll={true}
+              hasSelectAll
               valueRenderer={this.handleCustomRender}
               shouldToggleOnHover={false}
               selected={this.state.orgs}
               options={this.state.options}
-              selectAllLabel={'All Orgs'}
+              selectAllLabel="All Orgs"
               onSelectedChanged={value => {
                 this.handleMultiSelect(value);
               }}

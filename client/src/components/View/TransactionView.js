@@ -7,8 +7,8 @@ import { withStyles } from '@material-ui/core/styles';
 import FontAwesome from 'react-fontawesome';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Table, Card, CardBody, CardTitle } from 'reactstrap';
-import { transactionType } from '../types';
 import JSONTree from 'react-json-tree';
+import { transactionType } from '../types';
 import Modal from '../Styled/Modal';
 
 const readTheme = {
@@ -48,20 +48,18 @@ const writeTheme = {
   base0F: '#b15928'
 };
 
-const styles = theme => {
-  return {
-    listIcon: {
-      color: '#ffffff',
-      marginRight: 20
-    },
-    JSONtree: {
-      '& ul': {
-        backgroundColor: 'transparent !important',
-        color: '#fff'
-      }
+const styles = theme => ({
+  listIcon: {
+    color: '#ffffff',
+    marginRight: 20
+  },
+  JSONtree: {
+    '& ul': {
+      backgroundColor: 'transparent !important',
+      color: '#fff'
     }
-  };
-};
+  }
+});
 
 const reads = {
   color: '#2AA233'

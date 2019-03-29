@@ -95,8 +95,6 @@ const styles = theme => {
   };
 };
 
-export const Modal = ({ children, classes }) => {
-  return children && children(classes);
-};
+export const Modal = ({ children, classes }) => children && children(classes);
 
 export default withStyles(styles)(Modal);

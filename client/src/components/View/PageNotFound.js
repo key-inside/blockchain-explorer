@@ -33,22 +33,18 @@ const styles = theme => {
   };
 };
 
-export const PageNotFound = ({ classes }) => {
-  return (
-    <div className={classes.container}>
-      <div className={classes.header}>
-        <FontAwesome
-          name="exclamation-triangle"
-          className={classes.errorIcon}
-        />404
-      </div>
-      <div className={classes.subHeader}> Page not found </div>
-      <div className={classes.content}>
-        {' '}
-        The page you are trying to access does not exist. Please check the URL
-      </div>
+export const PageNotFound = ({ classes }) => (
+  <div className={classes.container}>
+    <div className={classes.header}>
+      <FontAwesome name="exclamation-triangle" className={classes.errorIcon} />
+      404
     </div>
-  );
-};
+    <div className={classes.subHeader}> Page not found </div>
+    <div className={classes.content}>
+      {' '}
+      The page you are trying to access does not exist. Please check the URL
+    </div>
+  </div>
+);
 
 export default withStyles(styles)(PageNotFound);

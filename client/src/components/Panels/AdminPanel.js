@@ -12,11 +12,11 @@ import ExpansionPanel, {
 } from '@material-ui/core/ExpansionPanel';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
-import ChannelForm from '../Forms/ChannelForm';
 import FontAwesome from 'react-fontawesome';
 import { MenuItem } from '@material-ui/core/Menu';
 import { FormControl, FormHelperText } from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import ChannelForm from '../Forms/ChannelForm';
 
 const styles = theme => {
   const { type } = theme.palette;
@@ -131,5 +131,5 @@ function mapStateToProps(state, ownProps) {
 
 export default compose(
   withStyles(styles),
-  connect(mapStateToProps /*,mapDispatchToProps*/)
+  connect(mapStateToProps /* ,mapDispatchToProps */)
 )(AdminPanel);

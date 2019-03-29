@@ -8,17 +8,15 @@ import { Badge } from 'reactstrap';
 import ReactTable from '../Styled/Table';
 import { peerStatusType } from '../types';
 
-const styles = theme => {
-  return {
-    table: {
-      height: 335,
-      overflowY: 'scroll'
-    },
-    center: {
-      textAlign: 'center'
-    }
-  };
-};
+const styles = theme => ({
+  table: {
+    height: 335,
+    overflowY: 'scroll'
+  },
+  center: {
+    textAlign: 'center'
+  }
+});
 
 const PeersHealth = ({ peerStatus, classes }) => {
   const columnHeaders = [

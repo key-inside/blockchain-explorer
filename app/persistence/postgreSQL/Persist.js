@@ -1,18 +1,21 @@
 /**
  *    SPDX-License-Identifier: Apache-2.0
  */
-
-var CRUDService = require('./CRUDService.js');
-var MetricService = require('./MetricService.js');
-var pgservice = require('./db/pgservice.js');
+const pgservice = require('./pgservice');
 
 class Persist {
-  constructor() {}
+  constructor(pgconfig) {
+    this.pgservice = new pgservice(pgconfig);
+    this.metricservice;
+    this.crudService;
+  }
 
-  async initialize() {
-    await pgservice.handleDisconnect();
-    this.metricservice = new MetricService();
-    this.crudService = new CRUDService();
+  setMetricService(metricservice) {
+    this.metricservice = metricservice;
+  }
+
+  setCrudService(crudService) {
+    this.crudService = crudService;
   }
 
   getMetricService() {
@@ -23,8 +26,12 @@ class Persist {
     return this.crudService;
   }
 
+  getPGService() {
+    return this.pgservice;
+  }
+
   closeconnection() {
-    pgservice.closeconnection();
+    this.pgservice.closeconnection();
   }
 }
 

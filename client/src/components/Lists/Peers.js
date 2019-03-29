@@ -3,8 +3,8 @@
  */
 
 import React from 'react';
-import ReactTable from '../Styled/Table';
 import matchSorter from 'match-sorter';
+import ReactTable from '../Styled/Table';
 import { peerListType } from '../types';
 
 const Peers = ({ peerList }) => {
@@ -56,6 +56,48 @@ const Peers = ({ peerList }) => {
           { threshold: matchSorter.rankings.SIMPLEMATCH }
         ),
       filterAll: true
+    },
+    {
+      Header: 'Ledger Height',
+      columns: [
+        {
+          Header: 'High',
+          accessor: 'ledger_height_high',
+          filterMethod: (filter, rows) =>
+            matchSorter(
+              rows,
+              filter.value,
+              { keys: ['ledger_height_high'] },
+              { threshold: matchSorter.rankings.SIMPLEMATCH }
+            ),
+          filterAll: true
+        },
+        {
+          Header: 'Low',
+          accessor: 'ledger_height_low',
+          filterMethod: (filter, rows) =>
+            matchSorter(
+              rows,
+              filter.value,
+              { keys: ['ledger_height_low'] },
+              { threshold: matchSorter.rankings.SIMPLEMATCH }
+            ),
+          filterAll: true
+        },
+        {
+          Header: 'Unsigned',
+          id: 'ledger_height_unsigned',
+          accessor: d => d.ledger_height_unsigned.toString(),
+          filterMethod: (filter, rows) =>
+            matchSorter(
+              rows,
+              filter.value,
+              { keys: ['ledger_height_unsigned'] },
+              { threshold: matchSorter.rankings.SIMPLEMATCH }
+            ),
+          filterAll: true
+        }
+      ]
     }
   ];
 

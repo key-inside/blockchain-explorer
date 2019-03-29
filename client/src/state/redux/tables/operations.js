@@ -3,6 +3,7 @@
  */
 import actions from './actions';
 import { get } from '../../../services/request';
+
 const blockList = channel => dispatch =>
   get(`/api/blockAndTxList/${channel}/0`)
     .then(resp => {
@@ -70,7 +71,7 @@ const channels = () => dispatch =>
     });
 
 const peerList = channel => dispatch =>
-  get(`/api/peers/${channel}`)
+  get(`/api/peersStatus/${channel}`)
     .then(resp => {
       if (resp.status === 500) {
         dispatch(

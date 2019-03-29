@@ -5,7 +5,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import clientJson from '../../../package.json';
-import Version from '../../FabricVerison';
+import Version from '../../FabricVersion';
 
 const styles = theme => {
   const { type } = theme.palette;
@@ -26,19 +26,17 @@ const styles = theme => {
   };
 };
 
-const FooterView = ({ classes }) => {
-  return (
-    <div className={classes.root}>
-      <div>
-        <div className={classes.footer}>
-          {'Hyperledger Explorer Client Version: '}
-          {clientJson.version}
-          &emsp;
-          {'Fabric Compatibility: '} {Version.map(version => version)}
-        </div>
+const FooterView = ({ classes }) => (
+  <div className={classes.root}>
+    <div>
+      <div className={classes.footer}>
+        {'Hyperledger Explorer Client Version: '}
+        {clientJson.version}
+        &emsp;
+        {'Fabric Compatibility: '} {Version.map(v => v)}
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 export default withStyles(styles)(FooterView);

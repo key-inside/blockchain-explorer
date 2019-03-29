@@ -10,14 +10,12 @@ import { Table, Card, CardBody, CardTitle } from 'reactstrap';
 import { blockHashType, onCloseType } from '../types';
 import Modal from '../Styled/Modal';
 
-const styles = theme => {
-  return {
-    cubeIcon: {
-      color: '#ffffff',
-      marginRight: 20
-    }
-  };
-};
+const styles = theme => ({
+  cubeIcon: {
+    color: '#ffffff',
+    marginRight: 20
+  }
+});
 
 class BlockView extends Component {
   handleClose = () => {

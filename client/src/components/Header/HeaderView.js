@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import compose from 'recompose/compose';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import Select from '../Styled/Select';
 import { Nav, Navbar, NavbarBrand, NavbarToggler, Collapse } from 'reactstrap';
 import { HashRouter as Router, NavLink } from 'react-router-dom';
 import Switch from '@material-ui/core/Switch';
@@ -16,6 +15,7 @@ import Websocket from 'react-websocket';
 import Badge from '@material-ui/core/Badge';
 import Dialog from '@material-ui/core/Dialog';
 import Loader from 'react-loader-spinner';
+import Select from '../Styled/Select';
 import NotificationsPanel from '../Panels/NotificationsPanel';
 import Logo from '../../static/images/Explorer_Logo.svg';
 import AdminPanel from '../Panels/AdminPanel';
@@ -216,6 +216,7 @@ export class HeaderView extends Component {
       this.syncData(currentChannel);
     }, 60000);
   }
+
   componentWillUnmount() {
     clearInterval(this.interVal);
   }
@@ -388,7 +389,9 @@ export class HeaderView extends Component {
   render() {
     const { mode, classes } = this.props;
     const { hostname, port } = window.location;
-    const webSocketUrl = `ws://${hostname}:${port}/`;
+    const webSocketProtocol =
+      window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const webSocketUrl = `${webSocketProtocol}://${hostname}:${port}/`;
     const dark = mode === 'dark';
     const {
       isLoading,

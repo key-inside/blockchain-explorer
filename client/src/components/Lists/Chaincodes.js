@@ -11,17 +11,15 @@ import ChaincodeForm from '../Forms/ChaincodeForm';
 import ChaincodeModal from '../View/ChaincodeModal';
 import { chaincodeListType } from '../types';
 
-const styles = theme => {
-  return {
-    hash: {
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      maxWidth: 60,
-      letterSpacing: '2px'
-    }
-  };
-};
+const styles = theme => ({
+  hash: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: 60,
+    letterSpacing: '2px'
+  }
+});
 
 export class Chaincodes extends Component {
   constructor(props) {

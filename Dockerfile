@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM node:8.11.3-alpine
+FROM node:8.15.0-alpine
 
 # default values pf environment variables
 # that are used inside container
@@ -35,9 +35,6 @@ RUN apk add --no-cache --virtual npm-deps python make g++ && \
     pip install --upgrade pip setuptools && \
 	rm -r /root/.cache
 
-# install yarn
-RUN npm install -g yarn
-
 # install NPM dependencies
 RUN cd $EXPLORER_APP_PATH && npm install && npm build
 
@@ -51,4 +48,4 @@ RUN apk del npm-deps
 EXPOSE 8080
 
 # run blockchain explorer main app
-CMD node $DEFAULT_WORKDIR/explorer/main.js
+CMD node $EXPLORER_APP_PATH/main.js && tail -f /dev/null

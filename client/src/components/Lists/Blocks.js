@@ -8,13 +8,13 @@ import Dialog from '@material-ui/core/Dialog';
 import { Button } from 'reactstrap';
 import matchSorter from 'match-sorter';
 import find from 'lodash/find';
+import moment from 'moment';
+import { isNull } from 'util';
 import ReactTable from '../Styled/Table';
 import BlockView from '../View/BlockView';
 import TransactionView from '../View/TransactionView';
 import MultiSelect from '../Styled/MultiSelect';
-import moment from 'moment';
 import DatePicker from '../Styled/DatePicker';
-import { isNull } from 'util';
 import {
   blockListType,
   currentChannelType,
@@ -120,7 +120,7 @@ export class Blocks extends Component {
     blockList.forEach(element => {
       selection[element.blocknum] = false;
     });
-    let opts = [];
+    const opts = [];
     this.props.transactionByOrg.forEach(val => {
       opts.push({ label: val.creator_msp_id, value: val.creator_msp_id });
     });
@@ -145,6 +145,7 @@ export class Blocks extends Component {
   componentWillUnmount() {
     clearInterval(this.interVal);
   }
+
   handleCustomRender(selected, options) {
     if (selected.length === 0) {
       return 'Select Orgs';
@@ -175,6 +176,7 @@ export class Blocks extends Component {
     await getTransaction(currentChannel, tid);
     this.setState({ dialogOpen: true });
   };
+
   handleMultiSelect = value => {
     this.setState({ orgs: value });
   };
@@ -446,12 +448,12 @@ export class Blocks extends Component {
           </div>
           <div className="col-md-2">
             <MultiSelect
-              hasSelectAll={true}
+              hasSelectAll
               valueRenderer={this.handleCustomRender}
               shouldToggleOnHover={false}
               selected={this.state.orgs}
               options={this.state.options}
-              selectAllLabel={'All Orgs'}
+              selectAllLabel="All Orgs"
               onSelectedChanged={value => {
                 this.handleMultiSelect(value);
               }}
