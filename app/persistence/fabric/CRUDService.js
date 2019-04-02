@@ -131,6 +131,10 @@ class CRUDService {
   }
 
   async saveTransaction(transaction) {
+    transaction.creator_id_bytes = transaction.creator_id_bytes.replace(
+      /\0+$/g,
+      ''
+    );
     const c = await this.sql.getRowByPkOne(
       `select count(1) as c from transactions where blockid='${
         transaction.blockid
