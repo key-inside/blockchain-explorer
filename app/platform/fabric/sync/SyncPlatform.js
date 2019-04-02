@@ -123,7 +123,8 @@ class SyncPlatform {
         this.client_name
       );
     } else {
-      throw new ExplorerError(explorer_mess.error.ERROR_1009);
+      console.error(explorer_mess.error.ERROR_1009);
+      // throw new ExplorerError(explorer_mess.error.ERROR_1009);
     }
   }
 
