@@ -42,7 +42,7 @@ class CRUDService {
     }
     const sqlTxList = ` select t.creator_msp_id,t.txhash,t.type,t.chaincodename,t.createdt,channel.name as channelName from transactions as t
        inner join channel on t.channel_genesis_hash=channel.channel_genesis_hash where  t.blockid >= ${blockNum} and t.id >= ${txid} ${orgsSql} and
-       t.channel_genesis_hash = '${channel_genesis_hash}'  and t.createdt between '${from}' and '${to}'  order by  t.id desc`;
+       t.channel_genesis_hash = '${channel_genesis_hash}'  and t.createdt between '${from}' and '${to}'  order by t.blockid desc, t.id desc`;
     return this.sql.getRowsBySQlQuery(sqlTxList);
   }
 
