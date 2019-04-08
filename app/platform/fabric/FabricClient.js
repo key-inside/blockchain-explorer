@@ -602,6 +602,7 @@ class FabricClient {
 
   async getPeerStatus(peer) {
     const channel = this.getDefaultChannel();
+    console.log('getPeerStatus - this.adminpeers:', this.adminpeers.keys());
     const adminpeer = this.adminpeers.get(peer.requests);
     let status = {};
     if (adminpeer) {

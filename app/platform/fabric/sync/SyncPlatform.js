@@ -93,15 +93,37 @@ class SyncPlatform {
     if (!this.client) {
       throw new ExplorerError(explorer_mess.error.ERROR_2011);
     }
-    const peer = {
-      requests: this.client.getDefaultPeer().getUrl(),
-      mspid: this.client_configs.organizations[
-        this.client_configs.clients[this.client_name].organization
-      ].mspid
-    };
 
-    const peerStatus = await this.client.getPeerStatus(peer);
-
+    let peerStatus = { status: false };
+    console.log(
+      'SyncPlatform.initialize - this.client.adminpeers:',
+      this.client.adminpeers.keys()
+    );
+    for (let [k, adminpeer] of this.client.adminpeers) {
+      const peer = {
+        requests: adminpeer.getUrl(),
+        mspid: this.client_configs.organizations[
+          this.client_configs.clients[this.client_name].organization
+        ].mspid
+      };
+      const m = 'SyncPlatform.initialize - trying to request ' + peer.requests;
+      console.log(m);
+      logger.log(m);
+      peerStatus = await this.client.getPeerStatus(peer);
+      if (peerStatus.status == 'RUNNING') {
+        if (adminpeer.getUrl() != this.client.getDefaultPeer().getUrl()) {
+          this.client.setDefaultPeer(adminpeer.getPeer());
+          console.log(
+            'SyncPlatform.initialize - replace default peer to:',
+            adminpeer.getUrl()
+          );
+        }
+        console.log('SyncPlatform.initialize - RUNNING:', adminpeer.getUrl());
+        break;
+      }
+      console.log('SyncPlatform.initialize - try more');
+    }
+    console.log('SyncPlatform.initialize - peerStatus:', peerStatus);
     if (peerStatus.status) {
       // updating the client network and other details to DB
       const res = await this.syncService.synchNetworkConfigToDB(this.client);
@@ -123,7 +145,9 @@ class SyncPlatform {
         this.client_name
       );
     } else {
-      console.error(explorer_mess.error.ERROR_1009);
+      const m = explorer_mess.error.ERROR_1009;
+      console.error(m);
+      logger.error(m);
       // throw new ExplorerError(explorer_mess.error.ERROR_1009);
     }
   }
