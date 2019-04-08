@@ -513,7 +513,7 @@ class FabricClient {
                 'Peer configuration is not found in config.json for peer %s, so peer status not work for the peer',
                 peer.endpoint
               );
-              return;
+              // return;
             }
           }
         }
