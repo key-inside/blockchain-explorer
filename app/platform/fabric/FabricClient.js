@@ -74,11 +74,41 @@ class FabricClient {
     );
 
     // enable discover
-    await this.defaultChannel.initialize({
-      discover: true,
-      target: this.defaultPeer,
-      asLocalhost: asLocalhost
-    });
+    // this.defaultPeer가 죽어있을 수 있다.
+    // this.defaultChannel.getPeers();를 쓸 수 있을듯
+    // 비동기로 loop 돌면서 initialize할 수는 없다.
+    // 실패 원인이 discovery할 peer에 통신이 안되는 것 외에도 있을 수 있다. Failed to discover ::
+    let nextDefaultPeer = null;
+    const peers = this.defaultChannel.getPeers();
+    for (const i in peers) {
+      let peer = peers[i];
+      console.log('FabricClient.initialize - with:', peer.getUrl());
+      try {
+        await this.defaultChannel.initialize({
+          discover: true,
+          target: peer,
+          asLocalhost: asLocalhost
+        });
+      } catch (err) {
+        if (
+          err.message.indexOf('Failed to discover ::') == 0 &&
+          i < peers.length - 1
+        ) {
+          console.log('FabricClient.initialize - try more:', err);
+          continue;
+        }
+        throw err;
+      }
+      if (peer.getUrl() != this.defaultPeer.getUrl()) {
+        nextDefaultPeer = peer;
+        console.log(
+          'FabricClient.initialize - nextDefaultPeer:',
+          nextDefaultPeer.getUrl()
+        );
+      }
+      console.log('FabricClient.initialize - channel initialized');
+      break;
+    }
 
     let organization = client_config.client.organization;
     logger.debug(
@@ -93,6 +123,14 @@ class FabricClient {
       // CA configured
       logger.debug('CA configured in connection profile [%s]', organization);
       await this.getRegisteredUser(client_config);
+    }
+
+    if (nextDefaultPeer != null) {
+      console.log(
+        'FabricClient.initialize - replace default peer to:',
+        nextDefaultPeer.getUrl()
+      );
+      this.setDefaultPeer(nextDefaultPeer);
     }
 
     // getting channels from queryChannels
