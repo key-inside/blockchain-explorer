@@ -1,0 +1,107 @@
+{
+  "network-configs": {
+    "network-1": {
+      "version": "1.0",
+      "clients": {
+        "client-1": {
+          "tlsEnable": false,
+          "organization": "payprotocol",
+          "channel": "payprotocol",
+          "credentialStore": {
+            "path": "./tmp/credentialStore_payprotocol/credential",
+            "cryptoStore": {
+              "path": "./tmp/credentialStore_payprotocol/crypto"
+            }
+          }
+        }
+      },
+      "channels": {
+        "payprotocol": {
+          "peers": {
+            "117.52.38.130": {},
+            "117.52.38.131": {},
+            "117.52.38.132": {},
+            "117.52.38.133": {}
+          },
+          "connection": {
+            "timeout": {
+              "peer": {
+                "endorser": "6000",
+                "eventHub": "6000",
+                "eventReg": "6000"
+              }
+            }
+          }
+        }
+      },
+      "organizations": {
+        "payprotocol": {
+          "mspid": "payprotocol",
+          "signedCert": {
+            "path": "/tmp/crypto/signcerts"
+          },
+          "adminPrivateKey": {
+            "path": "/tmp/crypto/keystore"
+          },
+          "peers": [
+            "117.52.38.130",
+            "117.52.38.131",
+            "117.52.38.132",
+            "117.52.38.133"
+          ]
+        },
+        "payprotocol-orderer": {
+          "mspid": "payprotocol-orderer",
+          "adminPrivateKey": {
+            "path": "/tmp/crypto/keystore"
+          }
+        }
+      },
+      "peers": {
+        "117.52.38.130": {
+          "url": "grpc://117.52.38.130:7051",
+          "eventUrl": "grpc://117.52.38.130:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "payprotocol-peer-001"
+          }
+        },
+        "117.52.38.131": {
+          "url": "grpc://117.52.38.131:7051",
+          "eventUrl": "grpc://117.52.38.131:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "payprotocol-peer-002"
+          }
+        },
+        "117.52.38.132": {
+          "url": "grpc://117.52.38.132:7051",
+          "eventUrl": "grpc://117.52.38.132:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "payprotocol-peer-003"
+          }
+        },
+        "117.52.38.133": {
+          "url": "grpc://117.52.38.133:7051",
+          "eventUrl": "grpc://117.52.38.133:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "payprotocol-peer-004"
+          }
+        }
+      },
+      "orderers": {
+        "payprotocol-orderer-001": {
+          "url": "grpc://117.52.38.146:7050"
+        },
+        "payprotocol-orderer-002": {
+          "url": "grpc://117.52.38.147:7050"
+        },
+        "payprotocol-orderer-003": {
+          "url": "grpc://117.52.38.148:7050"
+        },
+        "payprotocol-orderer-004": {
+          "url": "grpc://117.52.38.149:7050"
+        }
+      }
+    }
+  },
+  "license": "Apache-2.0"
+}
