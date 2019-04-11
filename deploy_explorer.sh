@@ -74,6 +74,7 @@ function config(){
 	network_config_file=$(pwd)/examples/$fabricBlockchainNetworkName/config.json
 	#configure explorer to connect to specific Blockchain network using given crypto materials
 	network_crypto_base_path=$(pwd)/examples/$fabricBlockchainNetworkName/crypto
+	log_dir=$(pwd)/logs
 
 	# local vnet configuration
 
@@ -195,6 +196,7 @@ function deploy_run_explorer(){
 		# -e HFC_LOGGING='{"debug":"/opt/logs/app/hfc.log","info":"/opt/logs/app/hfc.log","error":"/opt/logs/app/hfc.log","warn":"/opt/logs/app/hfc.log"}' \
 		-e DISCOVERY_AS_LOCALHOST=false \
 		-v $network_config_file:/opt/explorer/app/platform/fabric/config.json \
+		-v $log_dir:/opt/logs \
 		-v $network_crypto_base_path:/tmp/crypto \
 		-p 8090:8080 \
 		$fabric_explorer_tag
