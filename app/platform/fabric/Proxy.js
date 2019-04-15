@@ -61,7 +61,16 @@ class Proxy {
     for (const node of nodes) {
       if (node.peer_type === 'PEER') {
         const res = await client.getPeerStatus(node);
-        node.status = res.status ? res.status : 'DOWN';
+        // adminpeer(= config.json에 명시되지 않은 msp의 peer)가 아니면 어차피 getPeerStatus 결과를 받을 수 없음
+        if (client.adminpeers.get(node.requests)) {
+          node.status = res.status ? res.status : 'DOWN';
+        } else {
+          node.status = '-';
+        }
+        // fallback
+        node.ledger_height_low = '-';
+        node.ledger_height_high = '-';
+        node.ledger_height_unsigned = '-';
         if (discover_results && discover_results.peers_by_org) {
           const org = discover_results.peers_by_org[node.mspid];
           for (const peer of org.peers) {
