@@ -696,12 +696,23 @@ class FabricClient {
   }
 
   async getGenesisBlock(channel) {
-    const defaultOrderer = this.getDefaultOrderer();
-    const request = {
-      orderer: defaultOrderer,
-      txId: this.getHFC_Client().newTransactionID(true) // get an admin based transactionID
-    };
-    const genesisBlock = await channel.getGenesisBlock(request);
+    let orderers = channel.getOrderers();
+    const txId = this.getHFC_Client().newTransactionID(true); // get an admin based transactionID
+    let genesisBlock = null;
+    for (const i in orderers) {
+      let orderer = orderers[i];
+      console.log('FabricClient.getGenesisBlock - with:', orderer.getUrl());
+      try {
+        genesisBlock = await channel.getGenesisBlock({
+          orderer: orderer,
+          txId: txId
+        });
+      } catch (err) {
+        console.log('FabricClient.getGenesisBlock - try more:', err);
+        continue;
+      }
+      break;
+    }
     const block = BlockDecoder.decodeBlock(genesisBlock);
     return block;
   }
