@@ -31,7 +31,7 @@ class CRUDService {
        channel_genesis_hash = '${channel_genesis_hash}' group by transactions.blockid ),
       channel.name as channelname  from blocks inner join channel on blocks.channel_genesis_hash = channel.channel_genesis_hash  where
        blocks.channel_genesis_hash ='${channel_genesis_hash}' and blocknum >= 0
-       order by blocks.blocknum desc limit 3`;
+       order by blocks.blocknum desc limit 5`;
     return this.sql.getRowsBySQlQuery(sqlBlockActivityList);
   }
 

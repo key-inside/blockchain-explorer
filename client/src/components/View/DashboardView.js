@@ -142,7 +142,7 @@ export class DashboardView extends Component {
   setNotifications = blockList => {
     const notificationsArr = [];
     if (blockList !== undefined) {
-      for (let i = 0; i < 3 && blockList && blockList[i]; i += 1) {
+      for (let i = 0; i < 5 && blockList && blockList[i]; i += 1) {
         const block = blockList[i];
         const notify = {
           title: `Block ${block.blocknum} `,
