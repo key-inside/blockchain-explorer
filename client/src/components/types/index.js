@@ -91,7 +91,7 @@ export const currentChannelType = string;
 export const dashStatsType = shape({
   chaincodeCount: string,
   latestBlock: string,
-  peerCount: string,
+  // peerCount: string,
   txCount: string
 });
 
@@ -104,8 +104,8 @@ export const getChannelType = func;
 export const getChannelListType = func;
 export const getChannelsType = func;
 export const getDashStatsType = func;
-export const getPeerListType = func;
-export const getPeerStatusType = func;
+// export const getPeerListType = func;
+// export const getPeerStatusType = func;
 export const getTransactionInfoType = func;
 export const getTransactionListType = func;
 export const getTransactionType = func;
@@ -126,21 +126,21 @@ export const notificationsType = arrayOf(
 
 export const onCloseType = func;
 
-export const peerListType = arrayOf(
-  shape({
-    channel_genesis_hash: string,
-    name: string,
-    requests: string.isRequired,
-    server_hostname: string.isRequired
-  })
-);
+// export const peerListType = arrayOf(
+//   shape({
+//     channel_genesis_hash: string,
+//     name: string,
+//     requests: string.isRequired,
+//     server_hostname: string.isRequired
+//   })
+// );
 
-export const peerStatusType = arrayOf(
-  shape({
-    server_hostname: string,
-    status: string
-  })
-);
+// export const peerStatusType = arrayOf(
+//   shape({
+//     server_hostname: string,
+//     status: string
+//   })
+// );
 
 export const refreshType = func;
 

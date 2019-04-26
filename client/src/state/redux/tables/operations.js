@@ -70,24 +70,24 @@ const channels = () => dispatch =>
       console.error(error);
     });
 
-const peerList = channel => dispatch =>
-  get(`/api/peersStatus/${channel}`)
-    .then(resp => {
-      if (resp.status === 500) {
-        dispatch(
-          actions.getErroMessage(
-            '500 Internl Server Error: The server has encountered an internal error and unable to complete your request'
-          )
-        );
-      } else if (resp.status === 400) {
-        dispatch(actions.getErroMessage(resp.error));
-      } else {
-        dispatch(actions.getPeerList(resp));
-      }
-    })
-    .catch(error => {
-      console.error(error);
-    });
+// const peerList = channel => dispatch =>
+//   get(`/api/peersStatus/${channel}`)
+//     .then(resp => {
+//       if (resp.status === 500) {
+//         dispatch(
+//           actions.getErroMessage(
+//             '500 Internl Server Error: The server has encountered an internal error and unable to complete your request'
+//           )
+//         );
+//       } else if (resp.status === 400) {
+//         dispatch(actions.getErroMessage(resp.error));
+//       } else {
+//         dispatch(actions.getPeerList(resp));
+//       }
+//     })
+//     .catch(error => {
+//       console.error(error);
+//     });
 
 const transaction = (channel, transactionId) => dispatch =>
   get(`/api/transaction/${channel}/${transactionId}`)
@@ -139,7 +139,7 @@ export default {
   blockList,
   chaincodeList,
   channels,
-  peerList,
+  // peerList,
   transaction,
   transactionList,
   transactionListSearch,

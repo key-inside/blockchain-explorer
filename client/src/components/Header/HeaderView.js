@@ -32,8 +32,8 @@ import {
   getChangeChannelType,
   getChannelsType,
   getDashStatsType,
-  getPeerListType,
-  getPeerStatusType,
+  // getPeerListType,
+  // getPeerStatusType,
   getTransactionByOrgType,
   getTransactionPerHourType,
   getTransactionPerMinType,
@@ -48,15 +48,16 @@ const {
   transactionByOrg,
   dashStats,
   changeChannel,
-  blockActivity,
-  peerStatus
+  // blockActivity,
+  // peerStatus
+  blockActivity
 } = chartOperations;
 
 const {
   blockList,
   chaincodeList,
   channels,
-  peerList,
+  // peerList,
   transactionList
 } = tableOperations;
 
@@ -360,8 +361,8 @@ export class HeaderView extends Component {
       getBlocksPerMin,
       getChaincodeList,
       getDashStats,
-      getPeerList,
-      getPeerStatus,
+      // getPeerList,
+      // getPeerStatus,
       getTransactionByOrg,
       getTransactionList,
       getTransactionPerHour,
@@ -376,8 +377,8 @@ export class HeaderView extends Component {
       getChaincodeList(currentChannel),
       getDashStats(currentChannel),
       getBlockActivity(currentChannel),
-      getPeerList(currentChannel),
-      getPeerStatus(currentChannel),
+      // getPeerList(currentChannel),
+      // getPeerStatus(currentChannel),
       getTransactionByOrg(currentChannel),
       getTransactionList(currentChannel),
       getTransactionPerHour(currentChannel),
@@ -406,7 +407,7 @@ export class HeaderView extends Component {
 
     const links = [
       { to: '/', label: 'DASHBOARD', exact: true },
-      { to: '/network', label: 'NETWORK' },
+      // { to: '/network', label: 'NETWORK' },
       { to: '/blocks', label: 'BLOCKS' },
       { to: '/transactions', label: 'TRANSACTIONS' },
       { to: '/chaincodes', label: 'CHAINCODES' },
@@ -553,8 +554,8 @@ HeaderView.propTypes = {
   getChaincodeList: getChaincodeListType.isRequired,
   getChannels: getChannelsType.isRequired,
   getDashStats: getDashStatsType.isRequired,
-  getPeerList: getPeerListType.isRequired,
-  getPeerStatus: getPeerStatusType.isRequired,
+  // getPeerList: getPeerListType.isRequired,
+  // getPeerStatus: getPeerStatusType.isRequired,
   getTransactionByOrg: getTransactionByOrgType.isRequired,
   getTransactionPerHour: getTransactionPerHourType.isRequired,
   getTransactionPerMin: getTransactionPerMinType.isRequired,
@@ -579,8 +580,8 @@ export default compose(
       getChangeChannel: changeChannel, // not in syncdata
       getChannels: channels,
       getDashStats: dashStats,
-      getPeerList: peerList,
-      getPeerStatus: peerStatus,
+      // getPeerList: peerList,
+      // getPeerStatus: peerStatus,
       getBlockActivity: blockActivity,
       getTransactionByOrg: transactionByOrg,
       getTransactionList: transactionList,

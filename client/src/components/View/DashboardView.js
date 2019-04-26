@@ -9,13 +9,13 @@ import FontAwesome from 'react-fontawesome';
 import Card from '@material-ui/core/Card';
 import Avatar from '@material-ui/core/Avatar';
 import ChartStats from '../Charts/ChartStats';
-import PeersHealth from '../Lists/PeersHealth';
+// import PeersHealth from '../Lists/PeersHealth';
 import TimelineStream from '../Lists/TimelineStream';
 import OrgPieChart from '../Charts/OrgPieChart';
 import {
   blockListType,
   dashStatsType,
-  peerStatusType,
+  // peerStatusType,
   transactionByOrgType
 } from '../types';
 
@@ -67,10 +67,10 @@ const styles = theme => {
       marginLeft: '60%',
       marginTop: '65%'
     },
-    node: {
-      color: dark ? '#183a37' : '#21295c',
-      backgroundColor: dark ? 'rgb(104, 247, 235)' : '#858aa6'
-    },
+    // node: {
+    //   color: dark ? '#183a37' : '#21295c',
+    //   backgroundColor: dark ? 'rgb(104, 247, 235)' : '#858aa6'
+    // },
     block: {
       color: dark ? '#1f1a33' : '#004d6b',
       backgroundColor: dark ? 'rgb(106, 156, 248)' : '#b9d6e1'
@@ -108,14 +108,14 @@ export class DashboardView extends Component {
     const {
       blockList,
       dashStats,
-      peerStatus,
+      // peerStatus,
       transactionByOrg,
       blockActivity
     } = this.props;
     if (
       blockList === undefined ||
       dashStats === undefined ||
-      peerStatus === undefined ||
+      // peerStatus === undefined ||
       blockActivity === undefined ||
       transactionByOrg === undefined
     ) {
@@ -156,7 +156,7 @@ export class DashboardView extends Component {
   render() {
     const {
       dashStats,
-      peerStatus,
+      // peerStatus,
       blockActivity,
       transactionByOrg
     } = this.props;
@@ -213,7 +213,7 @@ export class DashboardView extends Component {
                   </Row>
                   TRANSACTIONS
                 </div>
-                <div className={`${classes.statistic} ${classes.vdivide}`}>
+                {/* <div className={`${classes.statistic} ${classes.vdivide}`}>
                   <Row>
                     <Col sm="4">
                       <Avatar className={`${classes.avatar} ${classes.node}`}>
@@ -225,7 +225,7 @@ export class DashboardView extends Component {
                     </Col>
                   </Row>
                   NODES
-                </div>
+                </div> */}
                 <div className={classes.statistic}>
                   <Row>
                     <Col sm="4">
@@ -248,9 +248,9 @@ export class DashboardView extends Component {
           </Row>
           <Row>
             <Col sm="6">
-              <Card className={classes.section}>
+              {/* <Card className={classes.section}>
                 <PeersHealth peerStatus={peerStatus} />
-              </Card>
+              </Card> */}
               <Card className={classes.section}>
                 <TimelineStream
                   notifications={notifications}
@@ -278,7 +278,7 @@ export class DashboardView extends Component {
 DashboardView.propTypes = {
   blockList: blockListType.isRequired,
   dashStats: dashStatsType.isRequired,
-  peerStatus: peerStatusType.isRequired,
+  // peerStatus: peerStatusType.isRequired,
   transactionByOrg: transactionByOrgType.isRequired
 };
 

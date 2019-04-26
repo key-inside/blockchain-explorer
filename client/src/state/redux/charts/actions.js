@@ -38,10 +38,10 @@ const getNotification = notification => ({
   payload: { notification }
 });
 
-const getPeerStatus = peerStatus => ({
-  type: types.PEER_STATUS,
-  payload: peerStatus
-});
+// const getPeerStatus = peerStatus => ({
+//   type: types.PEER_STATUS,
+//   payload: peerStatus
+// });
 const getBlockActivity = blocks => ({
   type: types.BLOCK_ACTIVITY,
   payload: blocks
@@ -73,7 +73,7 @@ export default {
   getChannelList,
   getDashStats,
   getNotification,
-  getPeerStatus,
+  // getPeerStatus,
   getTransactionByOrg,
   getTransactionPerHour,
   getTransactionPerMin,

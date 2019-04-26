@@ -142,24 +142,24 @@ const notification = notification => dispatch => {
   dispatch(actions.getNotification(notify));
 };
 
-const peerStatus = channel => dispatch =>
-  get(`/api/peersStatus/${channel}`)
-    .then(resp => {
-      if (resp.status === 500) {
-        dispatch(
-          actions.getErroMessage(
-            '500 Internl Server Error: The server has encountered an internal error and unable to complete your request'
-          )
-        );
-      } else if (resp.status === 400) {
-        dispatch(actions.getErroMessage(resp.error));
-      } else {
-        dispatch(actions.getPeerStatus(resp));
-      }
-    })
-    .catch(error => {
-      console.error(error);
-    });
+// const peerStatus = channel => dispatch =>
+//   get(`/api/peersStatus/${channel}`)
+//     .then(resp => {
+//       if (resp.status === 500) {
+//         dispatch(
+//           actions.getErroMessage(
+//             '500 Internl Server Error: The server has encountered an internal error and unable to complete your request'
+//           )
+//         );
+//       } else if (resp.status === 400) {
+//         dispatch(actions.getErroMessage(resp.error));
+//       } else {
+//         dispatch(actions.getPeerStatus(resp));
+//       }
+//     })
+//     .catch(error => {
+//       console.error(error);
+//     });
 
 const transactionByOrg = channel => dispatch =>
   get(`/api/txByOrg/${channel}`)
@@ -229,6 +229,6 @@ export default {
   channel,
   channelList,
   changeChannel,
-  peerStatus,
+  // peerStatus,
   blockActivity
 };

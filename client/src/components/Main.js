@@ -8,7 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import BlocksView from './View/BlocksView';
-import NetworkView from './View/NetworkView';
+// import NetworkView from './View/NetworkView';
 import TransactionsView from './View/TransactionsView';
 import ChaincodeView from './View/ChaincodeView';
 import DashboardView from './View/DashboardView';
@@ -22,8 +22,8 @@ import {
   currentChannelType,
   dashStatsType,
   getTransactionType,
-  peerListType,
-  peerStatusType,
+  // peerListType,
+  // peerStatusType,
   transactionType,
   transactionByOrgType,
   transactionListType
@@ -35,7 +35,7 @@ const {
   blockActivitySelector,
   channelListSelector,
   dashStatsSelector,
-  peerStatusSelector,
+  // peerStatusSelector,
   transactionByOrgSelector
 } = chartSelectors;
 
@@ -43,7 +43,7 @@ const {
   blockListSelector,
   chaincodeListSelector,
   channelsSelector,
-  peerListSelector,
+  // peerListSelector,
   transactionSelector,
   transactionListSelector,
   blockListSearchSelector,
@@ -70,8 +70,8 @@ export const Main = props => {
     currentChannel,
     dashStats,
     getTransaction,
-    peerList,
-    peerStatus,
+    // peerList,
+    // peerStatus,
     transaction,
     transactionByOrg,
     transactionList,
@@ -101,14 +101,14 @@ export const Main = props => {
   const dashboardViewProps = {
     blockList,
     dashStats,
-    peerStatus,
+    // peerStatus,
     transactionByOrg,
     blockActivity
   };
 
-  const networkViewProps = {
-    peerList
-  };
+  // const networkViewProps = {
+  //   peerList
+  // };
 
   const transactionsViewProps = {
     currentChannel,
@@ -144,11 +144,11 @@ export const Main = props => {
             path="/channels"
             render={() => <ChannelsView {...channelsViewProps} />}
           />
-          <Route
+          {/* <Route
             exact
             path="/network"
             render={() => <NetworkView {...networkViewProps} />}
-          />
+          /> */}
           <Route
             exact
             path="/transactions"
@@ -168,8 +168,8 @@ Main.propTypes = {
   currentChannel: currentChannelType.isRequired,
   dashStats: dashStatsType.isRequired,
   getTransaction: getTransactionType.isRequired,
-  peerList: peerListType.isRequired,
-  peerStatus: peerStatusType.isRequired,
+  // peerList: peerListType.isRequired,
+  // peerStatus: peerStatusType.isRequired,
   transaction: transactionType.isRequired,
   transactionByOrg: transactionByOrgType.isRequired,
   transactionList: transactionListType.isRequired
@@ -185,8 +185,8 @@ export default compose(
       channels: channelsSelector(state),
       currentChannel: currentChannelSelector(state),
       dashStats: dashStatsSelector(state),
-      peerList: peerListSelector(state),
-      peerStatus: peerStatusSelector(state),
+      // peerList: peerListSelector(state),
+      // peerStatus: peerStatusSelector(state),
       transaction: transactionSelector(state),
       transactionByOrg: transactionByOrgSelector(state),
       transactionList: transactionListSelector(state),

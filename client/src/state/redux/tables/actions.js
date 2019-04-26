@@ -23,10 +23,10 @@ const getChannels = channels => ({
   payload: channels
 });
 
-const getPeerList = peerList => ({
-  type: types.PEER_LIST,
-  payload: peerList
-});
+// const getPeerList = peerList => ({
+//   type: types.PEER_LIST,
+//   payload: peerList
+// });
 
 const getTransaction = transaction => ({
   type: types.TRANSACTION,
@@ -46,7 +46,7 @@ export default {
   getBlockList,
   getChaincodeList,
   getChannels,
-  getPeerList,
+  // getPeerList,
   getTransaction,
   getTransactionList,
   getBlockListSearch,

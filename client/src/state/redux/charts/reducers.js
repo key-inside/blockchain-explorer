@@ -114,20 +114,20 @@ const notificationReducer = (state = initialState, action) => {
   }
 };
 
-const peerStatusReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case types.PEER_STATUS: {
-      return {
-        list: action.payload.peers,
-        loaded: true,
-        errors: action.errors
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-};
+// const peerStatusReducer = (state = initialState, action) => {
+//   switch (action.type) {
+//     case types.PEER_STATUS: {
+//       return {
+//         list: action.payload.peers,
+//         loaded: true,
+//         errors: action.errors
+//       };
+//     }
+//     default: {
+//       return state;
+//     }
+//   }
+// };
 
 const transactionByOrgReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -181,7 +181,7 @@ const reducer = combineReducers({
   channelList: channelListReducer,
   dashStats: dashStatsReducer,
   notification: notificationReducer,
-  peerStatus: peerStatusReducer,
+  // peerStatus: peerStatusReducer,
   transactionByOrg: transactionByOrgReducer,
   transactionPerHour: transactionPerHourReducer,
   transactionPerMin: transactionPerMinReducer,

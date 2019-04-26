@@ -67,20 +67,20 @@ const channelsReducer = (state = initialState, action) => {
   }
 };
 
-const peerListReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case types.PEER_LIST: {
-      return {
-        rows: action.payload.peers,
-        loaded: true,
-        errors: action.error
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-};
+// const peerListReducer = (state = initialState, action) => {
+//   switch (action.type) {
+//     case types.PEER_LIST: {
+//       return {
+//         rows: action.payload.peers,
+//         loaded: true,
+//         errors: action.error
+//       };
+//     }
+//     default: {
+//       return state;
+//     }
+//   }
+// };
 
 const transactionReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -131,7 +131,7 @@ const reducer = combineReducers({
   blockList: blockListReducer,
   chaincodeList: chaincodeListReducer,
   channels: channelsReducer,
-  peerList: peerListReducer,
+  // peerList: peerListReducer,
   transaction: transactionReducer,
   transactionList: transactionListReducer,
   blockListSearch: blockListSearchReducer,
