@@ -20,7 +20,7 @@ const styles = theme => {
   const dark = type === 'dark';
   return {
     scrollable: {
-      height: 300,
+      height: 876.5,
       overflowY: 'scroll'
     },
     text: {

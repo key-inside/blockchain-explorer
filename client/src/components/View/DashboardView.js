@@ -47,7 +47,7 @@ const styles = theme => {
       display: 'block',
       float: 'left',
       height: '100%',
-      width: '25%',
+      width: '33%',
       textAlign: 'center',
       fontSize: '18pt',
       color: dark ? '#ffffff' : '#000000'
@@ -85,6 +85,12 @@ const styles = theme => {
     },
     section: {
       height: 335,
+      marginBottom: '2%',
+      color: dark ? '#ffffff' : undefined,
+      backgroundColor: dark ? '#3c3558' : undefined
+    },
+    longsection: {
+      height: 876.5,
       marginBottom: '2%',
       color: dark ? '#ffffff' : undefined,
       backgroundColor: dark ? '#3c3558' : undefined
@@ -183,7 +189,15 @@ export class DashboardView extends Component {
       <div className={classes.background}>
         <div className={classes.view}>
           <Row>
-            <Col sm="12">
+            <Col sm="6">
+              <Card className={classes.longsection}>
+                <TimelineStream
+                  notifications={notifications}
+                  blockList={blockActivity}
+                />
+              </Card>
+            </Col>
+            <Col sm="6">
               <Card className={classes.blocks}>
                 <div className={`${classes.statistic} ${classes.vdivide}`}>
                   <Row>
@@ -213,19 +227,6 @@ export class DashboardView extends Component {
                   </Row>
                   TRANSACTIONS
                 </div>
-                {/* <div className={`${classes.statistic} ${classes.vdivide}`}>
-                  <Row>
-                    <Col sm="4">
-                      <Avatar className={`${classes.avatar} ${classes.node}`}>
-                        <FontAwesome name="users" />
-                      </Avatar>
-                    </Col>
-                    <Col sm="4">
-                      <h1 className={classes.count}>{dashStats.peerCount}</h1>
-                    </Col>
-                  </Row>
-                  NODES
-                </div> */}
                 <div className={classes.statistic}>
                   <Row>
                     <Col sm="4">
@@ -244,21 +245,6 @@ export class DashboardView extends Component {
                   CHAINCODES
                 </div>
               </Card>
-            </Col>
-          </Row>
-          <Row>
-            <Col sm="6">
-              {/* <Card className={classes.section}>
-                <PeersHealth peerStatus={peerStatus} />
-              </Card> */}
-              <Card className={classes.section}>
-                <TimelineStream
-                  notifications={notifications}
-                  blockList={blockActivity}
-                />
-              </Card>
-            </Col>
-            <Col sm="6">
               <Card className={classes.section}>
                 <ChartStats />
               </Card>
