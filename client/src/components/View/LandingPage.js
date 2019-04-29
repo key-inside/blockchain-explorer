@@ -7,7 +7,7 @@ import Slider from 'react-slick';
 import compose from 'recompose/compose';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import Logo from '../../static/images/Explorer_Logo.svg';
+import Logo from '../../static/images/pp-logo.png';
 import { chartOperations, chartSelectors } from '../../state/redux/charts';
 import { tableOperations } from '../../state/redux/tables';
 import {
@@ -90,7 +90,7 @@ export class LandingPage extends Component {
         slidesToScroll: 1
       },
       logoStyle: {
-        width: '520px',
+        width: '408px',
         height: '100px'
       },
       hasDbError: false

@@ -3,8 +3,8 @@
   "name": "Hyperledger Explorer",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "192x192",
+      "src": "pp-favicon.ico",
+      "sizes": "16x16",
       "type": "image/png"
     }
   ],

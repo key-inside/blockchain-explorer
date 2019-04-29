@@ -17,7 +17,7 @@ import Dialog from '@material-ui/core/Dialog';
 import Loader from 'react-loader-spinner';
 import Select from '../Styled/Select';
 import NotificationsPanel from '../Panels/NotificationsPanel';
-import Logo from '../../static/images/Explorer_Logo.svg';
+import Logo from '../../static/images/pp-logo.png';
 import AdminPanel from '../Panels/AdminPanel';
 import { chartOperations, chartSelectors } from '../../state/redux/charts';
 import { tableOperations, tableSelectors } from '../../state/redux/tables';
@@ -72,10 +72,10 @@ const styles = theme => {
   };
   return {
     logo: {
-      width: 260,
+      width: 204,
       height: 50,
       '@media (max-width: 1415px) and (min-width: 990px)': {
-        width: 200,
+        width: 163,
         height: 40
       }
     },
