@@ -60,6 +60,7 @@ class Proxy {
     const peers = [];
     for (const node of nodes) {
       if (node.peer_type === 'PEER') {
+        console.log('Proxy.getPeersStatus - client.getPeerStatus');
         const res = await client.getPeerStatus(node);
         // adminpeer(= config.json에 명시되지 않은 msp의 peer)가 아니면 어차피 getPeerStatus 결과를 받을 수 없음
         if (client.adminpeers.get(node.requests)) {

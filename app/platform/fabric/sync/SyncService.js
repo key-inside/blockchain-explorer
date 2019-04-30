@@ -288,7 +288,14 @@ class SyncServices {
     const results = await this.persistence
       .getMetricService()
       .findMissingBlockNumber(channel_genesis_hash, blockHeight);
-
+    try {
+      console.log(
+        'SyncService.synchBlocks - results:',
+        JSON.stringify(results)
+      );
+    } catch (e) {
+      console.error(e);
+    }
     if (results) {
       for (const result of results) {
         // get block by number
@@ -310,6 +317,7 @@ class SyncServices {
   }
 
   async processBlockEvent(client, block) {
+    console.log('SyncService.processBlockEvent - ', block.header.number);
     const _self = this;
     // get the first transaction
     const first_tx = block.data.data[0];

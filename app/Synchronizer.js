@@ -98,6 +98,7 @@ class Synchronizer {
       // this.persistence.closeconnection();
     }
     if (this.platform) {
+      console.log('Synchronizer.initialize - destroying SyncPlatform');
       this.platform.destroy();
     }
     if (this.handler) {

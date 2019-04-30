@@ -7,12 +7,14 @@ const logger = helper.getLogger('FabricEvent');
 
 class FabricEvent {
   constructor(client, fabricServices) {
+    this.rand = Math.random();
     this.client = client;
     this.fabricServices = fabricServices;
     this.channelEventHubs = new Map();
   }
 
   async initialize() {
+    console.log('FabricEvent[' + this.rand + '].initialize');
     // creating channel event hub
     const channels = this.client.getChannels();
     for (const [channel_name, channel] of channels.entries()) {
@@ -27,8 +29,14 @@ class FabricEvent {
   createChannelEventHub(channel) {
     // create channel event hub
     const eventHub = channel.newChannelEventHub(this.client.defaultPeer);
+    console.log(
+      'FabricEvent[' +
+        this.rand +
+        '].createChannelEventHub - registering Block Event'
+    );
     eventHub.registerBlockEvent(
       async block => {
+        console.log('Block Event listener');
         // skip first block, it is process by peer event hub
         if (!(block.header.number === '0' || block.header.number == 0)) {
           await this.fabricServices.processBlockEvent(this.client, block);
@@ -44,6 +52,10 @@ class FabricEvent {
   }
 
   connectChannelEventHub(channel_name, eventHub) {
+    console.log(
+      'FabricEvent[' + this.rand + '].connectChannelEventHub - eventHub:',
+      eventHub ? eventHub.getName() : 'false'
+    );
     const _self = this;
     if (eventHub) {
       eventHub.connect(true);
@@ -64,6 +76,10 @@ class FabricEvent {
 
   isChannelEventHubConnected(channel_name) {
     const eventHub = this.channelEventHubs.get(channel_name);
+    console.log(
+      'FabricEvent[' + this.rand + '].isChannelEventHubConnected - eventHub: ',
+      eventHub ? eventHub.getName() : 'false'
+    );
     if (eventHub) {
       return eventHub.isconnected();
     }
@@ -72,14 +88,36 @@ class FabricEvent {
 
   disconnectChannelEventHub(channel_name) {
     const eventHub = this.channelEventHubs.get(channel_name);
+    console.log(
+      'FabricEvent[' + this.rand + '].disconnectChannelEventHub - disconnect'
+    );
     return eventHub.disconnect();
   }
 
   disconnectEventHubs() {
+    console.log(
+      'FabricEvent[' +
+        this.rand +
+        '].disconnectEventHubs - this.channelEventHubs.size:' +
+        this.channelEventHubs.size
+    );
     // disconnect all event hubs
     for (const [channel_name, eventHub] of this.channelEventHubs.entries()) {
       const status = this.isChannelEventHubConnected(channel_name);
+      console.log(
+        'FabricEvent[' +
+          this.rand +
+          '].disconnectEventHubs - status of ' +
+          channel_name +
+          ':' +
+          status
+      );
       if (status) {
+        console.log(
+          'FabricEvent[' +
+            this.rand +
+            '].disconnectEventHubs - before call disconnectChannelEventHub'
+        );
         this.disconnectChannelEventHub(channel_name);
       }
     }
@@ -89,6 +127,11 @@ class FabricEvent {
   async synchChannelBlocks(channel_name) {
     if (this.isChannelEventHubConnected(channel_name)) {
       const channel = this.client.hfc_client.getChannel(channel_name);
+      console.log(
+        'FabricEvent[' +
+          this.rand +
+          '].synchChannelBlocks - before call SyncService.synchBlocks()'
+      );
       await this.fabricServices.synchBlocks(this.client, channel);
     }
   }

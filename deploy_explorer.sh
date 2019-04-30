@@ -193,7 +193,7 @@ function deploy_run_explorer(){
 		-e ENROLL_AFFILIATION=".department2" \
 		-e ADMIN_USERNAME="********" \
 		-e ADMIN_SECRET="********" \
-		# -e HFC_LOGGING='{"debug":"/opt/logs/app/hfc.log","info":"/opt/logs/app/hfc.log","error":"/opt/logs/app/hfc.log","warn":"/opt/logs/app/hfc.log"}' \
+		-e HFC_LOGGING='{"info":"/opt/logs/app/hfc.log","error":"console"}' \
 		-e DISCOVERY_AS_LOCALHOST=false \
 		-v $network_config_file:/opt/explorer/app/platform/fabric/config.json \
 		-v $log_dir:/opt/logs \

@@ -24,6 +24,7 @@ const config_path = path.resolve(__dirname, '../config.json');
 
 class SyncPlatform {
   constructor(persistence, sender) {
+    this.rand = Math.random();
     this.network_name;
     this.client_name;
     this.client;
@@ -92,7 +93,7 @@ class SyncPlatform {
 
     let peerStatus = { status: false };
     console.log(
-      'SyncPlatform.initialize - this.client.adminpeers:',
+      'SyncPlatform[' + this.rand + '].initialize - this.client.adminpeers:',
       this.client.adminpeers.keys()
     );
     for (let [k, adminpeer] of this.client.adminpeers) {
@@ -102,7 +103,11 @@ class SyncPlatform {
           this.client_configs.clients[this.client_name].organization
         ].mspid
       };
-      const m = 'SyncPlatform.initialize - trying to request ' + peer.requests;
+      const m =
+        'SyncPlatform[' +
+        this.rand +
+        '].initialize - trying to request ' +
+        peer.requests;
       console.log(m);
       logger.log(m);
       peerStatus = await this.client.getPeerStatus(peer);
@@ -110,16 +115,24 @@ class SyncPlatform {
         if (adminpeer.getUrl() != this.client.getDefaultPeer().getUrl()) {
           this.client.setDefaultPeer(adminpeer.getPeer());
           console.log(
-            'SyncPlatform.initialize - replace default peer to:',
+            'SyncPlatform[' +
+              this.rand +
+              '].initialize - replace default peer to:',
             adminpeer.getUrl()
           );
         }
-        console.log('SyncPlatform.initialize - RUNNING:', adminpeer.getUrl());
+        console.log(
+          'SyncPlatform[' + this.rand + '].initialize - RUNNING:',
+          adminpeer.getUrl()
+        );
         break;
       }
-      console.log('SyncPlatform.initialize - try more');
+      console.log('SyncPlatform[' + this.rand + '].initialize - try more');
     }
-    console.log('SyncPlatform.initialize - peerStatus:', peerStatus);
+    console.log(
+      'SyncPlatform[' + this.rand + '].initialize - peerStatus:',
+      peerStatus
+    );
     if (peerStatus.status) {
       // updating the client network and other details to DB
       const res = await this.syncService.synchNetworkConfigToDB(this.client);
@@ -134,8 +147,9 @@ class SyncPlatform {
       // validating any missing block from the current client ledger
       // set blocksSyncTime property in platform config.json in minutes
       // wait until FabricEvent make its own connection complete. (1000ms is approximated.)
+      const rand = Math.random();
       setTimeout(() => {
-        _self.isChannelEventHubConnected();
+        _self.isChannelEventHubConnected(rand);
       }, 1000);
       logger.debug(
         '******* Initialization end for child client process %s ******',
@@ -153,14 +167,28 @@ class SyncPlatform {
     }
   }
 
-  async isChannelEventHubConnected() {
+  async isChannelEventHubConnected(rand) {
     for (const [channel_name, channel] of this.client.getChannels().entries()) {
       // validate channel event is connected
       const status = this.eventHub.isChannelEventHubConnected(channel_name);
       if (status) {
+        console.log(
+          'SyncPlatform[' +
+            this.rand +
+            '].isChannelEventHubConnected[' +
+            rand +
+            '] - before call SyncService.synchBlocks()'
+        );
         await this.syncService.synchBlocks(this.client, channel);
       } else {
         // channel client is not connected then it will reconnect
+        console.log(
+          'SyncPlatform[' +
+            this.rand +
+            '].isChannelEventHubConnected[' +
+            rand +
+            '] - before call FabricEvent.connectChannelEventHub()'
+        );
         this.eventHub.connectChannelEventHub(channel_name);
       }
     }
@@ -193,6 +221,7 @@ class SyncPlatform {
   }
 
   destroy() {
+    console.log('SyncPlatform[' + this.rand + '].destory');
     if (this.eventHub) {
       this.eventHub.disconnectEventHubs();
     }
