@@ -44,7 +44,7 @@ export const TimeChart = ({ chartData, classes }) => (
   <div>
     <Card>
       <CardContent className={classes.content}>
-        <ResponsiveContainer width="100%" height={255}>
+        <ResponsiveContainer width="100%" height={259}>
           <ScatterChart>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="datetime" className="datetime" />
