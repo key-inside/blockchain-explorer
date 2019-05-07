@@ -168,8 +168,9 @@ const platformroutes = async function(app, platform) {
     if (channelName) {
       statusMetrics.getTxPerChaincode(channelName, async data => {
         for (const chaincode of data) {
-          const temp = await proxy.loadChaincodeSrc(chaincode.path);
-          chaincode.source = temp;
+          // const temp = await proxy.loadChaincodeSrc(chaincode.path);
+          // chaincode.source = temp;
+          chaincode.source = '';
         }
         res.send({
           status: 200,
