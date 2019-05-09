@@ -71,12 +71,12 @@ class Synchronizer {
       }
     }
 
-    this.handler = setInterval(async () => {
+    let daemon = async () => {
       if (_self.platform) {
-        console.log('Synchronizer.initialize - destroying past SyncPlatform');
+        console.log('Synchronizer daemon - destroying past SyncPlatform');
         _self.platform.destroy();
       }
-      console.log('Synchronizer.initialize - building SyncPlatform');
+      console.log('Synchronizer daemon - building SyncPlatform');
       _self.platform = await SyncBuilder.build(
         pltfrm,
         _self.persistence,
@@ -86,10 +86,13 @@ class Synchronizer {
       _self.platform.setBlocksSyncTime(syncconfig.sync.blocksSyncTime);
       await _self.platform.initialize(_self.args);
       console.log(
-        'Synchronizer.initialize - SyncPlatform initialized:',
+        'Synchronizer daemon - SyncPlatform initialized:',
         _self.platform.rand
       );
-    }, blocksSyncTime);
+    };
+    // do-while fashion
+    daemon();
+    this.handler = setInterval(daemon, blocksSyncTime);
     console.log('Synchronizer.initialize - handler:', this.handler);
   }
 
