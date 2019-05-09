@@ -135,11 +135,12 @@ class SyncPlatform {
       this.eventHub = new FabricEvent(this.client, this.syncService);
       await this.eventHub.initialize();
 
-      // setting interval for validating any missing block from the current client ledger
+      // validating any missing block from the current client ledger
       // set blocksSyncTime property in platform config.json in minutes
-      setInterval(() => {
+      // wait until FabricEvent make its own connection complete. (1000ms is approximated.)
+      setTimeout(() => {
         _self.isChannelEventHubConnected();
-      }, this.blocksSyncTime);
+      }, 1000);
       logger.debug(
         '******* Initialization end for child client process %s ******',
         this.client_name
