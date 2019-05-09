@@ -21,9 +21,12 @@ class Synchronizer {
     this.args = args;
     this.persistence;
     this.platform;
+    this.handler;
   }
 
   async initialize() {
+    const _self = this;
+
     if (!syncconfig[explorer_const.PERSISTENCE]) {
       throw new ExplorerError(explorer_error.ERROR_1001);
     }
@@ -60,13 +63,34 @@ class Synchronizer {
     const sender = new ExplorerSender(syncconfig.sync);
     sender.initialize();
 
-    this.platform = await SyncBuilder.build(pltfrm, this.persistence, sender);
+    let blocksSyncTime = 60000;
+    if (syncconfig.sync.blocksSyncTime) {
+      const time = parseInt(syncconfig.sync.blocksSyncTime, 10);
+      if (!isNaN(time)) {
+        blocksSyncTime = time * 60 * 1000;
+      }
+    }
 
-    this.platform.setPersistenceService();
-
-    this.platform.setBlocksSyncTime(syncconfig.sync.blocksSyncTime);
-
-    await this.platform.initialize(this.args);
+    this.handler = setInterval(async () => {
+      if (_self.platform) {
+        console.log('Synchronizer.initialize - destroying past SyncPlatform');
+        _self.platform.destroy();
+      }
+      console.log('Synchronizer.initialize - building SyncPlatform');
+      _self.platform = await SyncBuilder.build(
+        pltfrm,
+        _self.persistence,
+        sender
+      );
+      _self.platform.setPersistenceService();
+      _self.platform.setBlocksSyncTime(syncconfig.sync.blocksSyncTime);
+      await _self.platform.initialize(_self.args);
+      console.log(
+        'Synchronizer.initialize - SyncPlatform initialized:',
+        _self.platform.rand
+      );
+    }, blocksSyncTime);
+    console.log('Synchronizer.initialize - handler:', this.handler);
   }
 
   close() {
@@ -75,6 +99,10 @@ class Synchronizer {
     }
     if (this.platform) {
       this.platform.destroy();
+    }
+    if (this.handler) {
+      console.log('Synchronizer.close - handler:', this.handler);
+      clearInterval(this.handler);
     }
   }
 }

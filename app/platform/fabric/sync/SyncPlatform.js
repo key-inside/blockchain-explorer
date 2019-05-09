@@ -43,10 +43,6 @@ class SyncPlatform {
       this.client_name
     );
 
-    setTimeout(() => {
-      this.initialize(args);
-    }, 60000);
-
     // loading the config.json
     const all_config = JSON.parse(fs.readFileSync(config_path, 'utf8'));
     const network_configs = all_config[fabric_const.NETWORK_CONFIGS];
@@ -145,6 +141,10 @@ class SyncPlatform {
         '******* Initialization end for child client process %s ******',
         this.client_name
       );
+
+      //TODO 여기서 blockSyncTime 후에 FabricEvent를 죽일 것인지, Synchronizer에서 blockSyncTime마다 SyncPlatform을 죽이고 다시 만들지
+      // 후자가 깔끔한데 전자를 고민하는 것은 후자가 무거울 것이기 때문.
+      // SyncPlatform을 한번 만들어놓고 계속 재사용하면 전자는 할 수가 없음.
     } else {
       const m = explorer_mess.error.ERROR_1009;
       console.error(m);
