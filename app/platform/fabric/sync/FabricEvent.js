@@ -72,13 +72,13 @@ class FabricEvent {
 
   disconnectChannelEventHub(channel_name) {
     const eventHub = this.channelEventHubs.get(channel_name);
-    return eventHub.disconnec();
+    return eventHub.disconnect();
   }
 
   disconnectEventHubs() {
     // disconnect all event hubs
     for (const [channel_name, eventHub] of this.channelEventHubs.entries()) {
-      const status = this.isChannelEventHubConnected();
+      const status = this.isChannelEventHubConnected(channel_name);
       if (status) {
         this.disconnectChannelEventHub(channel_name);
       }
