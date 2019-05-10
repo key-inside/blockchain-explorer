@@ -190,8 +190,8 @@ function deploy_run_explorer(){
 		-e DATABASE_PASSWD=$explorer_db_pwd \
 		-e ENROLL_ID="hlbeuser" \
 		-e ENROLL_AFFILIATION=".department2" \
-		-e ADMIN_USERNAME="admin" \
-		-e ADMIN_SECRET="adminpw" \
+		-e ADMIN_USERNAME="********" \
+		-e ADMIN_SECRET="********" \
 		-v $network_config_file:/opt/explorer/app/platform/fabric/config.json \
 		-v $network_crypto_base_path:/tmp/crypto \
 		-p 8090:8080 \
