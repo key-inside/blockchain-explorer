@@ -32,5 +32,10 @@ function deploy_build_explorer(){
 
 banner
 
+MODE=$1;
+
 deploy_build_explorer
-deploy_build_database
+
+if [ "$MODE" != "--exp_only" ]; then
+	deploy_build_database
+fi
