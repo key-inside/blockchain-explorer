@@ -5,7 +5,7 @@
 #!/bin/bash
 
 FABRIC_EXPLORER_DB_TAG="hyperledger/explorer-db"
-FABRIC_EXPLORER_TAG="hyperledger/explorer"
+FABRIC_EXPLORER_TAG="876529727832.dkr.ecr.ap-northeast-2.amazonaws.com/payprotocol/explorer"
 
 function banner(){
 	echo ""

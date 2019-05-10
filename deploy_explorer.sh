@@ -96,7 +96,7 @@ function config(){
 	db_ip=192.168.10.11
 
 	# fabric explorer configuratio
-	fabric_explorer_tag="hyperledger/explorer"
+	fabric_explorer_tag="876529727832.dkr.ecr.ap-northeast-2.amazonaws.com/payprotocol/explorer"
 	fabric_explorer_name="blockchain-explorer"
 	explorer_ip=192.168.10.12
 	# END: GLOBAL VARIABLES OF THE SCRIPT
