@@ -41,7 +41,6 @@ const styles = theme => {
         padding: '4px 4px',
         backgroundColor: dark ? '#5e558e' : '#000000',
         marginTop: -30,
-        marginLeft: -215,
         borderRadius: 8,
         color: '#ffffff',
         opacity: dark ? 1 : undefined
@@ -51,6 +50,24 @@ const styles = theme => {
       display: 'none'
     },
     lastFullHash: {},
+    partialAddress: {
+      textAlign: 'center',
+      position: 'relative !important',
+      '&:hover $fullAddress': {
+        display: 'block',
+        position: 'absolute !important',
+        padding: '4px 4px',
+        backgroundColor: dark ? '#5e558e' : '#000000',
+        marginTop: -30,
+        marginLeft: -215,
+        borderRadius: 8,
+        color: '#ffffff',
+        opacity: dark ? 1 : undefined
+      }
+    },
+    fullAddress: {
+      display: 'none'
+    },
     filter: {
       width: '100%',
       textAlign: 'center',
@@ -214,18 +231,6 @@ export class Transactions extends Component {
         filterAll: true
       },
       {
-        Header: 'Channel Name',
-        accessor: 'channelname',
-        filterMethod: (filter, rows) =>
-          matchSorter(
-            rows,
-            filter.value,
-            { keys: ['channelname'] },
-            { threshold: matchSorter.rankings.SIMPLEMATCH }
-          ),
-        filterAll: true
-      },
-      {
         Header: 'Tx Id',
         accessor: 'txhash',
         className: classes.hash,
@@ -255,25 +260,105 @@ export class Transactions extends Component {
         filterAll: true
       },
       {
-        Header: 'Type',
-        accessor: 'type',
+        Header: 'Function',
+        accessor: 'kiesnet_function',
         filterMethod: (filter, rows) =>
           matchSorter(
             rows,
             filter.value,
-            { keys: ['type'] },
+            { keys: ['kiesnet_function'] },
             { threshold: matchSorter.rankings.SIMPLEMATCH }
           ),
         filterAll: true
       },
       {
-        Header: 'Chaincode',
-        accessor: 'chaincodename',
+        Header: 'From',
+        id: 'from',
+        accessor: d =>
+          d.kiesnet_arguments && d.kiesnet_arguments.from
+            ? d.kiesnet_arguments.from
+            : '',
+        className: classes.hash,
+        Cell: row => (
+          <span className={classes.partialAddress}>
+            <div className={classes.fullAddress} id="showAddress">
+              {row.value}
+            </div>{' '}
+            {row.value.slice(0, 9)}
+            {!row.value ? '' : '... '}
+          </span>
+        ),
         filterMethod: (filter, rows) =>
           matchSorter(
             rows,
             filter.value,
-            { keys: ['chaincodename'] },
+            { keys: ['from'] },
+            { threshold: matchSorter.rankings.SIMPLEMATCH }
+          ),
+        filterAll: true
+      },
+      {
+        Header: 'To',
+        id: 'to',
+        accessor: d =>
+          d.kiesnet_arguments && d.kiesnet_arguments.to
+            ? d.kiesnet_arguments.to
+            : '',
+        className: classes.hash,
+        Cell: row => (
+          <span className={classes.partialAddress}>
+            <div className={classes.fullAddress} id="showAddress">
+              {row.value}
+            </div>{' '}
+            {row.value.slice(0, 9)}
+            {!row.value ? '' : '... '}
+          </span>
+        ),
+        filterMethod: (filter, rows) =>
+          matchSorter(
+            rows,
+            filter.value,
+            { keys: ['to'] },
+            { threshold: matchSorter.rankings.SIMPLEMATCH }
+          ),
+        filterAll: true
+      },
+      {
+        Header: 'Amount',
+        id: 'amount',
+        accessor: d =>
+          d.kiesnet_arguments && d.kiesnet_arguments.amount
+            ? d.kiesnet_arguments.amount
+            : '',
+        filterMethod: (filter, rows) =>
+          matchSorter(
+            rows,
+            filter.value,
+            { keys: ['amount'] },
+            { threshold: matchSorter.rankings.SIMPLEMATCH }
+          ),
+        filterAll: true
+      },
+      {
+        Header: 'Fee',
+        id: 'fee',
+        accessor: d => {
+          if (d.kiesnet_arguments) {
+            if (
+              d.kiesnet_arguments.fee ||
+              d.kiesnet_arguments.fee === 0 ||
+              d.kiesnet_arguments.fee === '0'
+            ) {
+              return d.kiesnet_arguments.fee;
+            }
+          }
+          return '';
+        },
+        filterMethod: (filter, rows) =>
+          matchSorter(
+            rows,
+            filter.value,
+            { keys: ['fee'] },
             { threshold: matchSorter.rankings.SIMPLEMATCH }
           ),
         filterAll: true
