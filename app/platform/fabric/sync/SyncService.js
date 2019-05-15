@@ -496,6 +496,22 @@ class SyncServices {
             txObj.payload.data.actions[0].payload.action.endorsements[0]
               .endorser.IdBytes;
         }
+        let function_arguments = getChaincodeFunctionAndArguments(writeSet);
+        const kiesnet_function = function_arguments.function
+          ? function_arguments.function
+          : '';
+        let kiesnet_arguments = '';
+        try {
+          kiesnet_arguments = JSON.stringify(function_arguments.arguments);
+        } catch (err) {
+          console.warn(err.message);
+        }
+        console.log(
+          'SyncService.processBlock - ',
+          kiesnet_function,
+          kiesnet_arguments
+        );
+
         const read_set = JSON.stringify(readSet, null, 2);
         const write_set = JSON.stringify(writeSet, null, 2);
 
@@ -561,7 +577,9 @@ class SyncServices {
           endorser_signature,
           creator_id_bytes,
           payload_proposal_hash,
-          endorser_id_bytes
+          endorser_id_bytes,
+          kiesnet_function,
+          kiesnet_arguments
         };
 
         // insert transaction
@@ -619,4 +637,255 @@ function convertValidationCode(code) {
     return code;
   }
   return _validation_codes[code];
+}
+
+function convertWriteSet(writeSet) {
+  // return {chaincode:{doctype:[doc0, doc1, ...]}}
+  let exists = {};
+  for (const i in writeSet) {
+    if (writeSet[i].chaincode == 'lscc') {
+      continue;
+    }
+    const chaincode = writeSet[i].chaincode.replace('kiesnet-cc-', 'kiesnet-');
+    for (const j in writeSet[i].set) {
+      const key = writeSet[i].set[j].key;
+      const doctype = key.substring(0, key.indexOf('_'));
+      const k = chaincode + '.' + doctype;
+      if (doctype.length > 0) {
+        let value = null;
+        if (writeSet[i].set[j].value.length > 0) {
+          try {
+            value = JSON.parse(writeSet[i].set[j].value);
+          } catch (err) {
+            console.warn(
+              'convertWriteSet:',
+              err.message,
+              writeSet[i].set[j].value
+            );
+          }
+          if (chaincode == 'kiesnet-contract' && doctype == 'CTR') {
+            try {
+              value.document = JSON.parse(value.document);
+            } catch (err) {
+              console.warn(
+                'convertWriteSet:',
+                err.message,
+                writeSet[i].set[j].value
+              );
+            }
+          }
+        } else {
+          if (writeSet[i].set[j].is_delete) {
+            value = 'deleted';
+          }
+        }
+        if (Array.isArray(exists[k])) {
+          exists[k].push(value);
+        } else {
+          exists[k] = value === null ? [] : [value];
+        }
+      }
+    }
+  }
+  return exists;
+}
+
+// block 최초 sync시 db에 넣고, kienset_function, kiesnet_arguments가 안들어갔으면 조회시 계산해서 넣고, 잘못 들어갔으면 백엔드를 만들어서 다시 계산해서 넣기?
+// 이런 로직 자체가 쓰레기같기도 한데, 그러면 아예 chaincode에서 abstract를 만들어서 원장에 저장해버릴 것인지?
+// amount는 소유권의 변경이 있을 때에만 표시
+//   pending을 별도로 표시하지 않고 from/to 한쪽이 비어있으면 pending으로 보면 된다.
+//   token이 나간 address를 무조건 from으로, token이 들어간 address를 무조건 to로 표현
+//   withdraw, prune은 from/to를 표기하지 않음
+//   account 기준 검색을 넣었을 때 검색결과에 포함되지 않는 점이 문제될 것인지?
+//   contract cancel/expire인 경우를 고려하면 transfer/pay contract create인 경우 to를 넣지 않는게 더 자연스럽다.
+// contract executed인 경우 'contract executed'와 dtype를 병기
+function getChaincodeFunctionAndArguments(writeSet) {
+  let exists = convertWriteSet(writeSet);
+
+  let result = { function: '', arguments: {} };
+
+  if (exists['kiesnet-token.BLOG']) {
+    if (exists['kiesnet-token.BLOG'].length == 1) {
+      switch (exists['kiesnet-token.BLOG'][0].type) {
+        case 0:
+          // tokenCreate or tokenMint
+          result.function = 'token/mint';
+          result.arguments.to = exists['kiesnet-token.BLOG'][0]['@balance_log'];
+          result.arguments.amount = exists['kiesnet-token.BLOG'][0].diff;
+          if (exists['kiesnet-token.ACC'] && exists['kiesnet-token.HLD']) {
+            result.function = 'token/create';
+          }
+          break;
+        case 1:
+          result.function = 'token/burn';
+          result.arguments.to = exists['kiesnet-token.BLOG'][0]['@balance_log'];
+          result.arguments.amount = exists['kiesnet-token.BLOG'][0].diff;
+          break;
+        case 2:
+          // transfer with pending
+          // exists['kiesnet-token.PBLC'][0].type 검사는 어차피 0일 테니 할 필요가 없다.
+          result.function = 'transfer';
+          result.arguments.from =
+            exists['kiesnet-token.BLOG'][0]['@balance_log'];
+          result.arguments.to = exists['kiesnet-token.BLOG'][0].rid;
+          result.arguments.amount = Math.abs(
+            exists['kiesnet-token.BLOG'][0].diff
+          );
+          result.arguments.fee = 0;
+          break;
+        case 3:
+          // trasfer contract executed without pending
+          result.function = 'contract/execute (transfer)';
+          result.arguments.from = exists['kiesnet-token.BLOG'][0].rid;
+          result.arguments.to = exists['kiesnet-token.BLOG'][0]['@balance_log'];
+          result.arguments.amount = exists['kiesnet-token.BLOG'][0].diff;
+          result.arguments.fee = 0;
+          break;
+        case 5:
+          result.function = 'withdraw';
+          break;
+        case 6:
+          result.function = 'pay';
+          result.arguments.from =
+            exists['kiesnet-token.BLOG'][0]['@balance_log'];
+          result.arguments.to = exists['kiesnet-token.BLOG'][0].rid;
+          result.arguments.amount = exists['kiesnet-token.PAY'][0].amount;
+          break;
+        case 7:
+          result.function = 'refund';
+          result.arguments.from = exists['kiesnet-token.BLOG'][0].rid;
+          result.arguments.to = exists['kiesnet-token.BLOG'][0]['@balance_log'];
+          result.arguments.amount = exists['kiesnet-token.BLOG'][0].diff;
+          break;
+        case 8:
+          result.function = 'pay/prune';
+          result.arguments.fee = 0;
+          break;
+        case 9:
+          result.function = 'fee/prune';
+          break;
+      }
+    } else if (exists['kiesnet-token.BLOG'].length == 2) {
+      result.function = 'transfer';
+      result.arguments.fee = 0;
+      for (let balanceLog of exists['kiesnet-token.BLOG']) {
+        if (balanceLog.type == 2) {
+          result.arguments.from = balanceLog['@balance_log'];
+        }
+        if (balanceLog.type == 3) {
+          result.arguments.amount = balanceLog.diff;
+          result.arguments.to = balanceLog['@balance_log'];
+        }
+      }
+    }
+  } else if (exists['kiesnet-token.ACC']) {
+    result.arguments.address = exists['kiesnet-token.ACC'][0]['@account'];
+    if (Object.keys(exists).length == 1) {
+      result.function = 'account/unsuspend';
+      if (exists['kiesnet-token.ACC'][0].suspended_time) {
+        result.function = 'account/suspend';
+      }
+    } else {
+      if (exists['kiesnet-token.BLC'] && exists['kiesnet-token.HLD']) {
+        result.function = 'account/create';
+      } else if (!exists['kiesnet-token.BLC']) {
+        result.function = 'account/holder/add';
+        if (exists['kiesnet-token.HLD'][0] === 'deleted') {
+          result.function = 'account/holder/remove';
+        }
+      }
+    }
+  } else if (exists['kiesnet-id.CERT']) {
+    if (Object.keys(exists).length == 1) {
+      result.function = 'register';
+    }
+    //TODO revoke 등
+  }
+
+  // add contract info
+  if (exists['kiesnet-contract.CTR']) {
+    let document = exists['kiesnet-contract.CTR'][0].document;
+    let dtype = document[0];
+    if (exists['kiesnet-contract.CTR'][0].canceled_time) {
+      // contract canceled
+      result.function = 'contract/cancel (' + dtype + ')';
+    } else {
+      switch (exists['kiesnet-contract.CTR'][0].approved_count) {
+        case 1:
+          // contract created
+          result.function = 'contract/create (' + dtype + ')';
+          break;
+        case exists['kiesnet-contract.CTR'][0].signers_count:
+          result.function = 'contract/execute (' + dtype + ')';
+          if (
+            Array.isArray(exists['kiesnet-token.PBLC']) &&
+            exists['kiesnet-token.PBLC'].length == 2
+          ) {
+            // transfer contract executed with pending인 경우 balance log가 남지 않는다.
+            for (let pendingBalance of exists['kiesnet-token.PBLC']) {
+              if (pendingBalance !== 'deleted') {
+                result.arguments.from = pendingBalance.rid;
+                result.arguments.to = pendingBalance.account;
+                result.arguments.amount = pendingBalance.amount;
+                break;
+              }
+            }
+          } else if (exists['kiesnet-token.PAY']) {
+            // pay contract executed인 경우 balance log가 남지 않는다.
+            result.arguments.from = exists['kiesnet-token.PAY'][0].rid;
+            result.arguments.to = exists['kiesnet-token.PAY'][0]['@pay'];
+            result.arguments.amount = exists['kiesnet-token.PAY'][0].amount;
+          }
+          break;
+        default:
+          result.function = 'contract/approve (' + dtype + ')';
+      }
+    }
+  }
+
+  // add fee info
+  if (exists['kiesnet-token.FEE']) {
+    result.arguments.fee = exists['kiesnet-token.FEE'][0].amount;
+  }
+
+  if (result.arguments.amount !== undefined) {
+    result.arguments.amount = format(result.arguments.amount, 8);
+  }
+
+  if (result.arguments.fee !== undefined) {
+    result.arguments.fee = format(result.arguments.fee, 8);
+  }
+
+  return result;
+}
+
+// It trims trailing 0s.
+function format(number, decimal) {
+  if (number === 0 || number === '0') {
+    return '0';
+  }
+  let sign = parseInt(number) < 0 ? '-' : '';
+  let absstr = Math.abs(number).toString();
+  let monetary = '0';
+  let fraction;
+  if (absstr.length > decimal) {
+    let integer = absstr.substring(0, absstr.length - decimal);
+    fraction = absstr.substring(absstr.length - decimal);
+    let i1 = integer.length % 3;
+    let m = i1 == 0 ? [] : [integer.substring(0, i1)];
+    for (let i2 = 0; i2 < (integer.length - i1) / 3; i2++) {
+      m.push(integer.substring(i1 + i2 * 3, i1 + i2 * 3 + 3));
+    }
+    monetary = m.join(',');
+  } else if (absstr.length == decimal) {
+    fraction = absstr;
+  } else {
+    fraction = absstr.padStart(decimal, '0');
+  }
+  fraction = fraction.replace(/0+$/, ''); // rtrim
+  let p = fraction.length == 0 ? '' : '.'; // decimal point
+  if (fraction.length > 4) {
+    fraction = fraction.substring(0, 4) + ' ' + fraction.substring(4);
+  }
+  return `${sign}${monetary}${p}${fraction}`;
 }

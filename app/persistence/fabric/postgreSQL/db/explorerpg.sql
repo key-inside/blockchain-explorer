@@ -160,7 +160,9 @@ CREATE TABLE transactions (
   tx_response character varying DEFAULT NULL,
   payload_proposal_hash character varying DEFAULT NULL,
   endorser_id_bytes character varying DEFAULT NULL,
-  endorser_signature character varying DEFAULT NULL
+  endorser_signature character varying DEFAULT NULL,
+  kiesnet_function character varying DEFAULT NULL,
+  kiesnet_arguments json default NULL
   );
 
 ALTER table transactions owner to :user;
