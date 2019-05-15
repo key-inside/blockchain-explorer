@@ -21,7 +21,7 @@ class CRUDService {
 
   getTransactionByID(channel_genesis_hash, txhash) {
     const sqlTxById = ` select t.txhash,t.validation_code,t.payload_proposal_hash,t.creator_msp_id,t.endorser_msp_id,t.chaincodename,t.type,t.createdt,t.read_set,
-        t.write_set,channel.name as channelName from TRANSACTIONS as t inner join channel on t.channel_genesis_hash=channel.channel_genesis_hash where t.txhash = '${txhash}' `;
+        t.write_set, t.kiesnet_function, t.kiesnet_arguments, channel.name as channelName from TRANSACTIONS as t inner join channel on t.channel_genesis_hash=channel.channel_genesis_hash where t.txhash = '${txhash}' `;
     return this.sql.getRowByPkOne(sqlTxById);
   }
 
@@ -40,7 +40,7 @@ class CRUDService {
     if (orgs && orgs != '') {
       orgsSql = `and t.creator_msp_id in (${orgs})`;
     }
-    const sqlTxList = ` select t.creator_msp_id,t.txhash,t.type,t.chaincodename,t.createdt,channel.name as channelName from transactions as t
+    const sqlTxList = ` select t.creator_msp_id,t.txhash,t.type,t.chaincodename,t.createdt,t.kiesnet_function, t.kiesnet_arguments, channel.name as channelName from transactions as t
        inner join channel on t.channel_genesis_hash=channel.channel_genesis_hash where  t.blockid >= ${blockNum} and t.id >= ${txid} ${orgsSql} and
        t.channel_genesis_hash = '${channel_genesis_hash}'  and t.createdt between '${from}' and '${to}'  order by t.blockid desc, t.id desc`;
     return this.sql.getRowsBySQlQuery(sqlTxList);

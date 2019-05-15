@@ -106,6 +106,28 @@ export class TransactionView extends Component {
       );
     }
     if (transaction) {
+      let vargs;
+      if (transaction.kiesnet_arguments) {
+        let l = Object.keys(transaction.kiesnet_arguments).length;
+        if (l > 0) {
+          vargs = [];
+          let first = true;
+          for (let k in transaction.kiesnet_arguments) {
+            let th;
+            if (first) {
+              th = <th rowSpan={l}>Chaincode Arguments:</th>;
+              first = false;
+            }
+            vargs.push(
+              <tr>
+                {th}
+                <td>{k}</td>
+                <td>{transaction.kiesnet_arguments[k]}</td>
+              </tr>
+            );
+          }
+        }
+      }
       return (
         <Modal>
           {modalClasses => (
@@ -127,7 +149,7 @@ export class TransactionView extends Component {
                     <tbody>
                       <tr>
                         <th>Transaction ID:</th>
-                        <td>
+                        <td colSpan={2}>
                           {transaction.txhash}
                           <button
                             type="button"
@@ -143,35 +165,40 @@ export class TransactionView extends Component {
                       </tr>
                       <tr>
                         <th>Validation Code:</th>
-                        <td>{transaction.validation_code}</td>
+                        <td colSpan={2}>{transaction.validation_code}</td>
                       </tr>
                       <tr>
                         <th>Payload Proposal Hash:</th>
-                        <td>{transaction.payload_proposal_hash}</td>
+                        <td colSpan={2}>{transaction.payload_proposal_hash}</td>
                       </tr>
                       <tr>
                         <th>Creator MSP:</th>
-                        <td>{transaction.creator_msp_id}</td>
+                        <td colSpan={2}>{transaction.creator_msp_id}</td>
                       </tr>
                       <tr>
                         <th>Endoser:</th>
-                        <td>{transaction.endorser_msp_id}</td>
+                        <td colSpan={2}>{transaction.endorser_msp_id}</td>
                       </tr>
                       <tr>
                         <th>Chaincode Name:</th>
-                        <td>{transaction.chaincodename}</td>
+                        <td colSpan={2}>{transaction.chaincodename}</td>
                       </tr>
                       <tr>
                         <th>Type:</th>
-                        <td>{transaction.type}</td>
+                        <td colSpan={2}>{transaction.type}</td>
                       </tr>
                       <tr>
                         <th>Time:</th>
-                        <td>{transaction.createdt}</td>
+                        <td colSpan={2}>{transaction.createdt}</td>
                       </tr>
                       <tr>
+                        <th>Chaincode Function:</th>
+                        <td colSpan={2}>{transaction.kiesnet_function}</td>
+                      </tr>
+                      {vargs}
+                      <tr>
                         <th style={reads}>Reads:</th>
-                        <td className={classes.JSONtree}>
+                        <td colSpan={2} className={classes.JSONtree}>
                           <JSONTree
                             data={transaction.read_set}
                             theme={readTheme}
@@ -181,7 +208,7 @@ export class TransactionView extends Component {
                       </tr>
                       <tr>
                         <th style={writes}>Writes:</th>
-                        <td className={classes.JSONtree}>
+                        <td colSpan={2} className={classes.JSONtree}>
                           <JSONTree
                             data={transaction.write_set}
                             theme={writeTheme}
