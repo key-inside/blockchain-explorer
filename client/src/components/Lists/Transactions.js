@@ -404,7 +404,7 @@ export class Transactions extends Component {
             this.setState({ filtered });
           }}
           minRows={0}
-          style={{ height: '750px' }}
+          style={{ height: '759px' }}
           showPagination={!(transactionList.length < 5)}
         />
 

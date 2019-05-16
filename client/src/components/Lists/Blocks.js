@@ -507,7 +507,7 @@ export class Blocks extends Component {
             this.setState({ filtered });
           }}
           minRows={0}
-          style={{ height: '750px' }}
+          style={{ height: '759px' }}
           showPagination={!(blockList.length < 5)}
         />
 
