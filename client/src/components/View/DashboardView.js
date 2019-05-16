@@ -47,7 +47,7 @@ const styles = theme => {
       display: 'block',
       float: 'left',
       height: '100%',
-      width: '33%',
+      width: '50%',
       textAlign: 'center',
       fontSize: '18pt',
       color: dark ? '#ffffff' : '#000000'
@@ -212,7 +212,7 @@ export class DashboardView extends Component {
                   </Row>
                   BLOCKS
                 </div>
-                <div className={`${classes.statistic} ${classes.vdivide}`}>
+                <div className={`${classes.statistic}`}>
                   <Row>
                     <Col sm="4">
                       <Avatar
@@ -226,23 +226,6 @@ export class DashboardView extends Component {
                     </Col>
                   </Row>
                   TRANSACTIONS
-                </div>
-                <div className={classes.statistic}>
-                  <Row>
-                    <Col sm="4">
-                      <Avatar
-                        className={`${classes.avatar} ${classes.chaincode}`}
-                      >
-                        <FontAwesome name="handshake-o" />
-                      </Avatar>
-                    </Col>
-                    <Col sm="4">
-                      <h1 className={classes.count}>
-                        {dashStats.chaincodeCount}
-                      </h1>
-                    </Col>
-                  </Row>
-                  CHAINCODES
                 </div>
               </Card>
               <Card className={classes.section}>

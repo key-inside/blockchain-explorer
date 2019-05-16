@@ -89,7 +89,6 @@ export const chartDataType = shape({
 export const currentChannelType = string;
 
 export const dashStatsType = shape({
-  chaincodeCount: string,
   latestBlock: string,
   // peerCount: string,
   txCount: string

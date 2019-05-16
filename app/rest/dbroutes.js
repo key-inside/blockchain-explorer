@@ -13,7 +13,7 @@ const dbroutes = (app, platform) => {
     const channel_genesis_hash = req.params.channel_genesis_hash;
     if (channel_genesis_hash) {
       statusMetrics.getStatus(channel_genesis_hash, data => {
-        if (data && (data.chaincodeCount && data.txCount && data.peerCount)) {
+        if (data && (data.txCount && data.peerCount)) {
           return res.send(data);
         }
         return requtil.notFound(req, res);

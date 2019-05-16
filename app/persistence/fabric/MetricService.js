@@ -118,8 +118,6 @@ class MetricService {
   }
 
   async getStatusGenerate(channel_genesis_hash) {
-    let chaincodeCount = await this.getChaincodeCount(channel_genesis_hash);
-    if (!chaincodeCount) chaincodeCount = 0;
     let txCount = await this.getTxCount(channel_genesis_hash);
     if (!txCount) txCount = 0;
     txCount.c = txCount.c ? txCount.c : 0;
@@ -130,7 +128,6 @@ class MetricService {
     if (!peerCount) peerCount = 0;
     peerCount.c = peerCount.c ? peerCount.c : 0;
     return {
-      chaincodeCount: chaincodeCount.c,
       txCount: txCount.c,
       latestBlock: blockCount.c,
       peerCount: peerCount.c
