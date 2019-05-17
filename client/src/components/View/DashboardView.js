@@ -40,8 +40,11 @@ const styles = theme => {
       boxShadow: dark ? '1px 2px 2px rgb(215, 247, 247)' : undefined
     },
     count: {
-      marginTop: '55%',
+      display: 'inline-block',
       color: dark ? '#ffffff' : undefined
+    },
+    countWrapper: {
+      marginTop: '45px'
     },
     statistic: {
       display: 'block',
@@ -64,8 +67,10 @@ const styles = theme => {
     },
     avatar: {
       justifyContent: 'center',
-      marginLeft: '60%',
-      marginTop: '65%'
+      display: 'inline-block',
+      top: '6px',
+      marginRight: '1rem',
+      lineHeight: '40px'
     },
     // node: {
     //   color: dark ? '#183a37' : '#21295c',
@@ -200,31 +205,23 @@ export class DashboardView extends Component {
             <Col sm="6">
               <Card className={classes.blocks}>
                 <div className={`${classes.statistic} ${classes.vdivide}`}>
-                  <Row>
-                    <Col sm="4">
-                      <Avatar className={`${classes.avatar} ${classes.block}`}>
-                        <FontAwesome name="cube" />
-                      </Avatar>
-                    </Col>
-                    <Col sm="4">
-                      <h1 className={classes.count}>{dashStats.latestBlock}</h1>
-                    </Col>
-                  </Row>
+                  <div className={classes.countWrapper}>
+                    <Avatar className={`${classes.avatar} ${classes.block}`}>
+                      <FontAwesome name="cube" />
+                    </Avatar>
+                    <h1 className={classes.count}>{dashStats.latestBlock}</h1>
+                  </div>
                   BLOCKS
                 </div>
                 <div className={`${classes.statistic}`}>
-                  <Row>
-                    <Col sm="4">
-                      <Avatar
-                        className={`${classes.avatar} ${classes.transaction}`}
-                      >
-                        <FontAwesome name="list-alt" />
-                      </Avatar>
-                    </Col>
-                    <Col sm="4">
-                      <h1 className={classes.count}>{dashStats.txCount}</h1>
-                    </Col>
-                  </Row>
+                  <div className={classes.countWrapper}>
+                    <Avatar
+                      className={`${classes.avatar} ${classes.transaction}`}
+                    >
+                      <FontAwesome name="list-alt" />
+                    </Avatar>
+                    <h1 className={classes.count}>{dashStats.txCount}</h1>
+                  </div>
                   TRANSACTIONS
                 </div>
               </Card>
