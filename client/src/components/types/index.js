@@ -46,7 +46,6 @@ export const chaincodeType = shape({
   chaincodename: string,
   channelName: string,
   channel_genesis_hash: string,
-  path: string,
   source: string,
   txCount: number,
   version: string
@@ -57,7 +56,6 @@ export const chaincodeListType = arrayOf(
     chaincodename: string,
     channelName: string,
     channel_genesis_hash: string,
-    path: string,
     source: string,
     txCount: number,
     version: string

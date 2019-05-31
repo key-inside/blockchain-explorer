@@ -78,13 +78,12 @@ class MetricService {
     const txArray = [];
     const c = await this.sql
       .getRowsBySQlNoCondtion(`select  c.name as chaincodename,channel.name as channelName ,c.version as version,c.channel_genesis_hash
-       as channel_genesis_hash,c.path as path ,txcount  as c from chaincodes as c inner join channel on c.channel_genesis_hash=channel.channel_genesis_hash where  c.channel_genesis_hash='${channel_genesis_hash}' `);
+       as channel_genesis_hash ,txcount  as c from chaincodes as c inner join channel on c.channel_genesis_hash=channel.channel_genesis_hash where  c.channel_genesis_hash='${channel_genesis_hash}' `);
     if (c) {
       c.forEach((item, index) => {
         txArray.push({
           channel_genesis_hash: item.channel_genesis_hash,
           chaincodename: item.chaincodename,
-          path: item.path,
           version: item.version,
           txCount: item.c,
           channel_genesis_hash: item.channel_genesis_hash

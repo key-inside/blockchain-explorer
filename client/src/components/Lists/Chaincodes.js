@@ -83,18 +83,6 @@ export class Chaincodes extends Component {
       filterAll: true
     },
     {
-      Header: 'Path',
-      accessor: 'path',
-      filterMethod: (filter, rows) =>
-        matchSorter(
-          rows,
-          filter.value,
-          { keys: ['path'] },
-          { threshold: matchSorter.rankings.SIMPLEMATCH }
-        ),
-      filterAll: true
-    },
-    {
       Header: 'Transaction Count',
       accessor: 'txCount',
       filterMethod: (filter, rows) =>
