@@ -13,7 +13,7 @@ const styles = theme => {
     fullwidth: {
       width: '100%',
       marginTop: 105,
-      marginBottom: 100,
+      paddingBottom: 100,
       backgroundColor: dark ? 'rgb(36, 32, 54)' : '#f0f5f9'
     },
     display: {
