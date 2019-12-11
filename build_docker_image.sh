@@ -6,6 +6,7 @@
 
 FABRIC_EXPLORER_DB_TAG="hyperledger/explorer-db"
 FABRIC_EXPLORER_TAG="876529727832.dkr.ecr.ap-northeast-2.amazonaws.com/payprotocol/explorer"
+GIT_VERSION=$(git describe --always --dirty --tags 2> /dev/null || echo 'unversioned')
 
 function banner(){
 	echo ""
@@ -27,7 +28,7 @@ function deploy_build_database(){
 
 function deploy_build_explorer(){
 	echo "Building Hyperledger Fabric explorer image..."
-	docker build --tag $FABRIC_EXPLORER_TAG .
+	docker build --tag $FABRIC_EXPLORER_TAG:$GIT_VERSION .
 }
 
 banner
