@@ -6,11 +6,12 @@ const helper = require('../../../common/helper');
 const logger = helper.getLogger('FabricEvent');
 
 class FabricEvent {
-  constructor(client, fabricServices) {
+  constructor(client, fabricServices, lastBlocknumPerChannel) {
     this.rand = Math.random();
     this.client = client;
     this.fabricServices = fabricServices;
     this.channelEventHubs = new Map();
+    this.lastBlocknumPerChannel = lastBlocknumPerChannel;
   }
 
   async initialize() {
@@ -29,11 +30,11 @@ class FabricEvent {
   createChannelEventHub(channel) {
     // create channel event hub
     const eventHub = channel.newChannelEventHub(this.client.defaultPeer);
-    console.log(
-      'FabricEvent[' +
-        this.rand +
-        '].createChannelEventHub - registering Block Event'
-    );
+    console.log(`FabricEvent[${this.rand}].createChannelEventHub - registering Block Event`);
+    let opt = {};
+    if (this.lastBlocknumPerChannel && this.lastBlocknumPerChannel[channel.getName()]) {
+      opt['startBlock'] = this.lastBlocknumPerChannel[channel.getName()];
+    }
     eventHub.registerBlockEvent(
       async block => {
         console.log('Block Event listener');
@@ -44,7 +45,8 @@ class FabricEvent {
       },
       err => {
         logger.error('Block Event %s', err);
-      }
+      },
+      opt
     );
     this.connectChannelEventHub(channel.getName(), eventHub);
     // set channel event hub to map
