@@ -23,7 +23,7 @@ const explorer_mess = require('../../../common/ExplorerMessage').explorer;
 const config_path = path.resolve(__dirname, '../config.json');
 
 class SyncPlatform {
-  constructor(persistence, sender) {
+  constructor(persistence, sender, findMissingBlock) {
     this.rand = Math.random();
     this.network_name;
     this.client_name;
@@ -34,6 +34,7 @@ class SyncPlatform {
     this.syncService = new SyncService(this, this.persistence);
     this.blocksSyncTime = 60000;
     this.client_configs;
+    this.findMissingBlock = findMissingBlock;
   }
 
   async initialize(args) {
