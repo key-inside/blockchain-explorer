@@ -415,6 +415,11 @@ class MetricService {
 
     return this.sql.getRowsBySQlQuery(sqlQuery);
   }
+
+  async getLastBlockNumber(channel_genesis_hash) {
+    const sqlQuery = `SELECT blocknum FROM blocks WHERE channel_genesis_hash = '${channel_genesis_hash}'ORDER BY blocknum DESC LIMIT 1`
+    return this.sql.getRowsBySQlQuery(sqlQuery);
+  }
 }
 
 module.exports = MetricService;

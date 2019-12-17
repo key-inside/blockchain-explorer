@@ -71,7 +71,7 @@ class Synchronizer {
       }
     }
 
-    let daemon = async () => {
+    let daemon = async findMissingBlock => {
       if (_self.platform) {
         console.log('Synchronizer daemon - destroying past SyncPlatform');
         _self.platform.destroy();
@@ -80,7 +80,8 @@ class Synchronizer {
       _self.platform = await SyncBuilder.build(
         pltfrm,
         _self.persistence,
-        sender
+        sender,
+        findMissingBlock
       );
       _self.platform.setPersistenceService();
       _self.platform.setBlocksSyncTime(syncconfig.sync.blocksSyncTime);
@@ -91,8 +92,8 @@ class Synchronizer {
       );
     };
     // do-while fashion
-    daemon();
-    this.handler = setInterval(daemon, blocksSyncTime);
+    daemon(false);
+    this.handler = setInterval(daemon, blocksSyncTime, false);
     console.log('Synchronizer.initialize - handler:', this.handler);
   }
 

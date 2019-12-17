@@ -23,7 +23,7 @@ const explorer_mess = require('../../../common/ExplorerMessage').explorer;
 const config_path = path.resolve(__dirname, '../config.json');
 
 class SyncPlatform {
-  constructor(persistence, sender) {
+  constructor(persistence, sender, findMissingBlock) {
     this.rand = Math.random();
     this.network_name;
     this.client_name;
@@ -34,6 +34,7 @@ class SyncPlatform {
     this.syncService = new SyncService(this, this.persistence);
     this.blocksSyncTime = 60000;
     this.client_configs;
+    this.findMissingBlock = findMissingBlock;
   }
 
   async initialize(args) {
@@ -140,8 +141,29 @@ class SyncPlatform {
         return;
       }
 
+      // last blocknum of each channel_genesis_hash
+      let lastBlocknumPerChannel = {};
+      for (let [i, channelname] of Object.keys(
+        this.client.client_config.channels
+      ).entries()) {
+        let channel_genesis_hash = this.client.getChannelGenHash(channelname);
+        let rows = await this.persistence
+          .getMetricService()
+          .getLastBlockNumber(channel_genesis_hash);
+        let lastBlockNum = 0;
+        if (rows.length != 0) {
+          lastBlockNum = rows[0]['blocknum'];
+        }
+        lastBlocknumPerChannel[channelname] = lastBlockNum;
+      }
+      console.log(`lastBlocknumPerChannel:`, lastBlocknumPerChannel);
+
       // start event
-      this.eventHub = new FabricEvent(this.client, this.syncService);
+      this.eventHub = new FabricEvent(
+        this.client,
+        this.syncService,
+        lastBlocknumPerChannel
+      );
       await this.eventHub.initialize();
 
       // validating any missing block from the current client ledger

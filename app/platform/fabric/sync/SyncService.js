@@ -284,33 +284,40 @@ class SyncServices {
       .queryInfo(client.getDefaultPeer(), true);
     const channel_genesis_hash = client.getChannelGenHash(channel_name);
     const blockHeight = parseInt(channelInfo.height.low) - 1;
-    // query missing blocks from DB
-    const results = await this.persistence
-      .getMetricService()
-      .findMissingBlockNumber(channel_genesis_hash, blockHeight);
-    try {
-      console.log(
-        'SyncService.synchBlocks - results:',
-        JSON.stringify(results)
-      );
-    } catch (e) {
-      console.error(e);
-    }
-    if (results) {
-      for (const result of results) {
-        // get block by number
-        const block = await client
-          .getHFC_Client()
-          .getChannel(channel_name)
-          .queryBlock(
-            result.missing_id,
-            client.getDefaultPeer().getName(),
-            true
-          );
-        await this.processBlockEvent(client, block);
+    // findMissingBlockNumber의 SQL이 높은 blockHeight에 대해 성능이 매우 좋지 않고 DB부하를 발생시킴
+    // 최초 1회만 실행하기
+    // 애초에 register block event 할 때 start block을 postgre last blocknum+1로 주면 여기서 missing block query를 할 필요가 없다.
+    // channel.blocks와 blocks 테이블의 count() where channel_genesis_hash=?가 다르면 그때 query해도 된다.
+    console.log('this.platform.findMissingBlock:', this.platform.findMissingBlock);
+    if (this.platform.findMissingBlock) {
+      // query missing blocks from DB
+      const results = await this.persistence
+        .getMetricService()
+        .findMissingBlockNumber(channel_genesis_hash, blockHeight);
+      try {
+        console.log(
+          'SyncService.synchBlocks - results:',
+          JSON.stringify(results)
+        );
+      } catch (e) {
+        console.error(e);
       }
-    } else {
-      logger.debug('Missing blocks not found for %s', channel_name);
+      if (results) {
+        for (const result of results) {
+          // get block by number
+          const block = await client
+            .getHFC_Client()
+            .getChannel(channel_name)
+            .queryBlock(
+              result.missing_id,
+              client.getDefaultPeer().getName(),
+              true
+            );
+          await this.processBlockEvent(client, block);
+        }
+      } else {
+        logger.debug('Missing blocks not found for %s', channel_name);
+      }
     }
     const index = this.synchInProcess.indexOf(synch_key);
     this.synchInProcess.splice(index, 1);
