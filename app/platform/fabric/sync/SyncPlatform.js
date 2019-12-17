@@ -143,16 +143,27 @@ class SyncPlatform {
 
       // last blocknum of each channel_genesis_hash
       let lastBlocknumPerChannel = {};
-      for (let [i, channelname] of Object.keys(this.client.client_config.channels).entries()) {
+      for (let [i, channelname] of Object.keys(
+        this.client.client_config.channels
+      ).entries()) {
         let channel_genesis_hash = this.client.getChannelGenHash(channelname);
-        let rows = await this.persistence.getMetricService().getLastBlockNumber(channel_genesis_hash);
-        let lastBlockNum = rows[0]['blocknum'];
+        let rows = await this.persistence
+          .getMetricService()
+          .getLastBlockNumber(channel_genesis_hash);
+        let lastBlockNum = 0;
+        if (rows.length != 0) {
+          lastBlockNum = rows[0]['blocknum'];
+        }
         lastBlocknumPerChannel[channelname] = lastBlockNum;
       }
       console.log(`lastBlocknumPerChannel:`, lastBlocknumPerChannel);
 
       // start event
-      this.eventHub = new FabricEvent(this.client, this.syncService, lastBlocknumPerChannel);
+      this.eventHub = new FabricEvent(
+        this.client,
+        this.syncService,
+        lastBlocknumPerChannel
+      );
       await this.eventHub.initialize();
 
       // validating any missing block from the current client ledger

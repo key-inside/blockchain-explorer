@@ -30,9 +30,20 @@ class FabricEvent {
   createChannelEventHub(channel) {
     // create channel event hub
     const eventHub = channel.newChannelEventHub(this.client.defaultPeer);
-    console.log(`FabricEvent[${this.rand}].createChannelEventHub - registering Block Event`);
+    console.log(
+      `FabricEvent[${
+        this.rand
+      }].createChannelEventHub - registering Block Event`
+    );
     let opt = {};
-    if (this.lastBlocknumPerChannel && this.lastBlocknumPerChannel[channel.getName()]) {
+    // DB가 비어있을때 (0번 블록부터 모두 가져와야 할 때) this.lastBlocknumPerChannel[channel.getName()]은 0이다.
+    // 따라서 조건식이 false가 되고 if문도 실행되지 않으면서 이벤트 리스너가 가장 최신 블록 하나만 가져오게 됨..
+    // if (this.lastBlocknumPerChannel && typeof this.lastBlocknumPerChannel[channel.getName()] !== "undefined")
+    // undefined 체킹 하면 0번(genesis) 블록 다음부터 가져오기 시작함 (리스너 등록할때 0번 블록을 걸러내고 있음)
+    if (
+      this.lastBlocknumPerChannel &&
+      this.lastBlocknumPerChannel[channel.getName()]
+    ) {
       opt['startBlock'] = this.lastBlocknumPerChannel[channel.getName()];
     }
     eventHub.registerBlockEvent(
