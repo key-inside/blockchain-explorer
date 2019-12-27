@@ -27,14 +27,14 @@ class MetricService {
   getTxCount(channel_genesis_hash) {
     // use trans column at channel table for faster count
     return this.sql.getRowsBySQlCase(
-      `select trans c from channel where channel_genesis_hash='${channel_genesis_hash}'`
+      `select count(1) c from transactions where channel_genesis_hash='${channel_genesis_hash}'`
     );
   }
 
   getBlockCount(channel_genesis_hash) {
     // use blocks column at channel table for faster count
     return this.sql.getRowsBySQlCase(
-      `select blocks c from channel where channel_genesis_hash='${channel_genesis_hash}'`
+      `select count(1) c from blocks where channel_genesis_hash='${channel_genesis_hash}'`
     );
   }
 
