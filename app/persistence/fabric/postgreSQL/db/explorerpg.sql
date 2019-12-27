@@ -195,6 +195,9 @@ CREATE INDEX ON Transactions (createdt);
 DROP INDEX IF EXISTS transaction_channel_genesis_hash_createdt_idx;
 CREATE INDEX ON Transactions (channel_genesis_hash, createdt);
 
+DROP INDEX IF EXISTS transactions_channel_genesis_hash_creator_msp_id_idx;
+CREATE INDEX ON Transactions (channel_genesis_hash, creator_msp_id);
+
 DROP INDEX IF EXISTS transaction_blockid_idx;
 CREATE INDEX ON Transactions (blockid);
 
