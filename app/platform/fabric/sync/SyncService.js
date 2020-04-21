@@ -288,7 +288,10 @@ class SyncServices {
     // 최초 1회만 실행하기
     // 애초에 register block event 할 때 start block을 postgre last blocknum+1로 주면 여기서 missing block query를 할 필요가 없다.
     // channel.blocks와 blocks 테이블의 count() where channel_genesis_hash=?가 다르면 그때 query해도 된다.
-    console.log('this.platform.findMissingBlock:', this.platform.findMissingBlock);
+    console.log(
+      'this.platform.findMissingBlock:',
+      this.platform.findMissingBlock
+    );
     if (this.platform.findMissingBlock) {
       // query missing blocks from DB
       const results = await this.persistence
@@ -461,9 +464,14 @@ class SyncServices {
           chaincodeID = new Uint8Array(
             txObj.payload.data.actions[0].payload.action.proposal_response_payload.extension
           );
-          status =
+          if (
             txObj.payload.data.actions[0].payload.action
-              .proposal_response_payload.extension.response.status;
+              .proposal_response_payload.extension.response != null
+          ) {
+            status =
+              txObj.payload.data.actions[0].payload.action
+                .proposal_response_payload.extension.response.status;
+          }
           mspId = txObj.payload.data.actions[0].payload.action.endorsements.map(
             i => i.endorser.Mspid
           );
